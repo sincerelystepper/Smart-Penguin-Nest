@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
@@ -8,7 +10,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://Admin:RWRd0sWxWVe87MlB@eee4113fgroup9.ivnnnaq.mongodb.net/?retryWrites=true&w=majority&appName=EEE4113FGroup9";
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
 app.post('/add-data', async (req, res) => {
