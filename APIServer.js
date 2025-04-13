@@ -16,12 +16,12 @@ const client = new MongoClient(uri);
 app.post('/add-data', async (req, res) => {
   try {
     await client.connect();
-    const db = client.db("sample_mflix");
-    const collection = db.collection("users");
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Temperature");
 
     const data = req.body;
-    if (!data.name || !data.email) {
-      return res.status(400).send("Missing fields: 'name' or 'email'");
+    if (!data.temperature || !data.timestamp) {
+      return res.status(400).send("Missing fields");
     }
 
     await collection.insertOne(data);
