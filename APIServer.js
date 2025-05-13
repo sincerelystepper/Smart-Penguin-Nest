@@ -13,7 +13,8 @@ app.use(express.json());
 
 app.post('/add-data', async (req, res) => {
   try {
-    const db = await connectToDatabase();
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
     const collection = db.collection("Temperature");
 
     const data = {
