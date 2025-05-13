@@ -9,8 +9,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: 'http://localhost:5173' // Allow Vite dev server
+  origin: 'https://penguin-application.onrender.com'
 }));
+
 app.use(express.json());
 
 app.post('/add-data', async (req, res) => {
