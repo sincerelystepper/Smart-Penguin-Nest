@@ -37,7 +37,7 @@ function App() {
 
   const [stats, setStats] = useState(null);
 
-  const API_URL = 'http://localhost:3000/data'; // or your Render URL  https://server-api-609n.onrender.com/data
+  const API_URL = 'https://server-api-609n.onrender.com/data'; // or your Render URL http://localhost:3000/data
 
   useEffect(() => {
     const fetchData = async () => {
