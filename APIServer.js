@@ -6,7 +6,9 @@ const connectToDatabase = require('./dbCon');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173' // Allow Vite dev server
+}));
 app.use(express.json());
 
 app.post('/add-data', async (req, res) => {
