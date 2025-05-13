@@ -3,6 +3,8 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/data';
+
 import {
   Chart as ChartJS,
   LineElement,
