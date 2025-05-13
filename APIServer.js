@@ -38,30 +38,17 @@ app.post('/add-data', async (req, res) => {
 
 app.get('/data', async (req, res) => {
   try {
-    await client.connect();
-    const db = client.db("Penguin_Data");
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data"); // Explicitly call db() on the client
     const collection = db.collection("Temperature");
 
-    const { start, end } = req.query;
-
-    const query = {};
-    if (start && end) {
-      query.timestamp = {
-        $gte: new Date(start),
-        $lte: new Date(end)
-      };
-    }
-
-    const results = await collection.find(query).sort({ timestamp: 1 }).toArray();
-    res.json(results);
+    const data = await collection.find().sort({ timestamp: 1 }).toArray();
+    res.status(200).json(data);
   } catch (err) {
-    console.error("Error fetching data:", err);
-    res.status(500).send("Error fetching data");
-  } finally {
-    await client.close();
+    console.error("Error fetching data:", err.message);
+    res.status(500).send("❌ Error fetching data");
   }
 });
-
 
 app.get('/', (req, res) => {
   res.send("👋 API is up and running");
