@@ -1,8 +1,7 @@
-require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+require('dotenv').config();
+const connectToDatabase = require('./dbCon');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,18 +9,18 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
-
 app.post('/add-data', async (req, res) => {
   try {
-    await client.connect();
-    const db = client.db("Penguin_Data");
+    const db = await connectToDatabase();
     const collection = db.collection("Temperature");
 
-    const data = req.body;
-    if (!data.temperature || !data.timestamp) {
-      return res.status(400).send("Missing fields");
+    const data = {
+      temperature: parseFloat(req.body.temperature),
+      timestamp: new Date(req.body.timestamp),
+    };
+
+    if (!data.temperature || isNaN(data.temperature) || isNaN(data.timestamp.getTime())) {
+      return res.status(400).send("Missing or invalid fields");
     }
 
     await collection.insertOne(data);
@@ -29,8 +28,19 @@ app.post('/add-data', async (req, res) => {
   } catch (err) {
     console.error("Error inserting data:", err.message);
     res.status(500).send("❌ Error inserting data");
-  } finally {
-    await client.close();
+  }
+});
+
+app.get('/data', async (req, res) => {
+  try {
+    const db = await connectToDatabase();
+    const collection = db.collection("Temperature");
+
+    const data = await collection.find().sort({ timestamp: 1 }).toArray();
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error fetching data:", err.message);
+    res.status(500).send("❌ Error fetching data");
   }
 });
 
