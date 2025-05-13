@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const connectToDatabase = require('./dbCon');
+const { connectToDatabase } = require('./dbCon');
+
+console.log(connectToDatabase);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,7 +16,7 @@ app.use(express.json());
 app.post('/add-data', async (req, res) => {
   try {
     const client = await connectToDatabase();
-    const db = client.db("Penguin_Data");
+    const db = client.db("Penguin_Data"); // Explicitly call db() on the client
     const collection = db.collection("Temperature");
 
     const data = {
@@ -36,7 +38,8 @@ app.post('/add-data', async (req, res) => {
 
 app.get('/data', async (req, res) => {
   try {
-    const db = await connectToDatabase();
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data"); // Explicitly call db() on the client
     const collection = db.collection("Temperature");
 
     const data = await collection.find().sort({ timestamp: 1 }).toArray();
