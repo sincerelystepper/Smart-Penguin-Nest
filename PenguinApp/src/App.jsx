@@ -31,7 +31,6 @@ function App() {
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
   const [rangeType, setRangeType] = useState("all");
-  const [loading, setLoading] = useState(true); // Add loading state
 
   const [startDate, setStartDate] = useState(new Date("2025-02-13T00:00:00Z"));
   const [endDate, setEndDate] = useState(new Date("2025-02-13T23:59:59Z"));
@@ -100,27 +99,11 @@ function App() {
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data");
-      } finally {
-        setLoading(false); // Set loading to false after fetching
       }
     };
 
     fetchData();
   }, [startDate, endDate, rangeType]);
-
-  if (loading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        flexDirection: 'column'
-      }}>
-        <p>Waiting for server...</p>
-      </div>
-    );
-  }
 
   return (
     <div style={{
