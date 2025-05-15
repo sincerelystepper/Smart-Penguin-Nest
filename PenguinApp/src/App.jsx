@@ -30,10 +30,10 @@ ChartJS.register(
 function App() {
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
-  const [rangeType, setRangeType] = useState("all");
+  const [rangeType, setRangeType] = useState("year"); // Default to year
 
-  const [startDate, setStartDate] = useState(new Date("2025-02-13T00:00:00Z"));
-  const [endDate, setEndDate] = useState(new Date("2025-02-13T23:59:59Z"));
+  const [startDate, setStartDate] = useState(new Date("2025-01-01T00:00:00Z"));
+  const [endDate, setEndDate] = useState(new Date("2025-12-31T23:59:59Z"));
 
   const [stats, setStats] = useState(null);
 
@@ -118,7 +118,6 @@ function App() {
       <div style={{ marginBottom: '20px' }}>
         <label>Select Range: </label>
         <select value={rangeType} onChange={(e) => setRangeType(e.target.value)}>
-          <option value="all">All Time</option>
           <option value="day">Day</option>
           <option value="month">Month</option>
           <option value="year">Year</option>
@@ -189,7 +188,7 @@ function App() {
       )}
 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-        <div style={{ width: '800px', height: '533px' }}>
+        <div style={{ width: '1600px', height: '533px' }}>
           {chartData ? (
             <Line
               data={chartData}
