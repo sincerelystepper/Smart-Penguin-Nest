@@ -14,7 +14,12 @@ app.use(cors({
 
 app.use(express.json());
 
-app.post('/add-data', async (req, res) => {
+app.post('/addTemp', async (req, res) => { // Post request to send temperature data
+  /** Example of how to use this endpoint with curl
+   /curl -X POST https://server-api-609n.onrender.com/addTemp \
+   -H "Content-Type: application/json" \
+   -d '{"temperature": 22.5, "timestamp": "2025-05-13T14:30:00Z"}'
+  */
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data"); // Explicitly call db() on the client
@@ -26,6 +31,53 @@ app.post('/add-data', async (req, res) => {
     };
 
     if (!data.temperature || isNaN(data.temperature) || isNaN(data.timestamp.getTime())) {
+      return res.status(400).send("Missing or invalid fields");
+    }
+
+    await collection.insertOne(data);
+    res.status(200).send("✅ Data inserted successfully");
+  } catch (err) {
+    console.error("Error inserting data:", err.message);
+    res.status(500).send("❌ Error inserting data");
+  }
+});
+
+app.post('/addFoodMass', async (req, res) => { // Post request to send food mass data
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data"); // Explicitly call db() on the client
+    const collection = db.collection("Food Mass");
+
+    const data = {
+      penguinID: parseFloat(req.body.penguinID),
+      foodMass: parseFloat(req.body.foodMass),
+      timestamp: new Date(req.body.timestamp),
+    };
+
+    if (!data.foodMass || isNaN(data.foodMass) || isNaN(data.timestamp.getTime())) {
+      return res.status(400).send("Missing or invalid fields");
+    }
+
+    await collection.insertOne(data);
+    res.status(200).send("✅ Data inserted successfully");
+  } catch (err) {
+    console.error("Error inserting data:", err.message);
+    res.status(500).send("❌ Error inserting data");
+  }
+});
+
+app.post('/addBodySize', async (req, res) => {
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data"); // Explicitly call db() on the client
+    const collection = db.collection("Body Size");
+
+    const data = {
+      bodySize: parseFloat(req.body.bodySize),
+      timestamp: new Date(req.body.timestamp),
+    };
+
+    if (!data.bodySize || isNaN(data.bodySize) || isNaN(data.timestamp.getTime())) {
       return res.status(400).send("Missing or invalid fields");
     }
 
