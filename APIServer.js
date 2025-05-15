@@ -37,7 +37,7 @@ app.post('/add-data', async (req, res) => {
   }
 });
 
-app.get('/data', async (req, res) => {
+app.get('/tempData', async (req, res) => {
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data");

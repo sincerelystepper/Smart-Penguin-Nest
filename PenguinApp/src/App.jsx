@@ -3,7 +3,7 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/data';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
 
 import {
   Chart as ChartJS,
@@ -37,7 +37,7 @@ function App() {
 
   const [stats, setStats] = useState(null);
 
-  const API_URL = 'https://server-api-609n.onrender.com/data'; // or your Render URL http://localhost:3000/data
+  const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/data
 
   useEffect(() => {
     const fetchData = async () => {
