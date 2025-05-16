@@ -3,6 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 const { connectToDatabase } = require('./dbCon');
 
+const { Parser } = require('json2csv');
+
+
 console.log(connectToDatabase);
 
 const app = express();
