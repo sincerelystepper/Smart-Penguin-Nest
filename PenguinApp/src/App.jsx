@@ -130,8 +130,8 @@ function App() {
           <DatePicker
             selected={startDate}
             onChange={date => {
-              setStartDate(date); // Set startDate to the selected date
-              setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1)); // Set endDate to the end of the selected day
+              setStartDate(date);
+              setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1));
             }}
             dateFormat="yyyy-MM-dd"
           />
@@ -143,8 +143,8 @@ function App() {
           <DatePicker
             selected={startDate}
             onChange={date => {
-              const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1); // Start of month
-              const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999); // End of month
+              const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+              const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
               setStartDate(startOfMonth);
               setEndDate(endOfMonth);
             }}
@@ -159,8 +159,8 @@ function App() {
           <DatePicker
             selected={startDate}
             onChange={date => {
-              const startOfYear = new Date(date.getFullYear(), 0, 1); // Start of year
-              const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999); // End of year
+              const startOfYear = new Date(date.getFullYear(), 0, 1);
+              const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
               setStartDate(startOfYear);
               setEndDate(endOfYear);
             }}
@@ -174,13 +174,13 @@ function App() {
         <div style={{ marginBottom: '20px' }}>
           <DatePicker
             selected={startDate}
-            onChange={date => setStartDate(date)} // Set startDate to the selected date
+            onChange={date => setStartDate(date)}
             showTimeSelect
             dateFormat="Pp"
           />
           <DatePicker
             selected={endDate}
-            onChange={date => setEndDate(date)} // Set endDate to the selected date
+            onChange={date => setEndDate(date)}
             showTimeSelect
             dateFormat="Pp"
           />
@@ -209,19 +209,20 @@ function App() {
           )}
         </div>
 
-        {stats && ( // Display stats if available
-          <div style={{ textAlign: 'left' }}>
-            <h3>Statistics</h3>
-            <p>Mean: {stats.mean.toFixed(2)}°C</p>
-            <p>Standard Deviation: {stats.stdDev.toFixed(2)}°C</p>
-            <p>Max: {stats.max.toFixed(2)}°C</p>
-            <p>Min: {stats.min.toFixed(2)}°C</p>
-          </div>
-        )}
-        <a href="https://server-api-609n.onrender.com/downloadTempData" download>
-        <button>Download Temperature CSV</button>
-        </a>
-
+        <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {stats && (
+            <>
+              <h3>Statistics</h3>
+              <p>Mean: {stats.mean.toFixed(2)}°C</p>
+              <p>Standard Deviation: {stats.stdDev.toFixed(2)}°C</p>
+              <p>Max: {stats.max.toFixed(2)}°C</p>
+              <p>Min: {stats.min.toFixed(2)}°C</p>
+            </>
+          )}
+          <a href="https://server-api-609n.onrender.com/downloadTempData" download>
+            <button>Download Temperature CSV</button>
+          </a>
+        </div>
       </div>
     </div>
   );
