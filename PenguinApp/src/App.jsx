@@ -197,7 +197,7 @@ function App() {
                 maintainAspectRatio: true,
                 plugins: {
                   legend: { display: true },
-                  title: { display: true, text: '🐧 Penguin Temperature Data' }
+                  title: { display: true, text: 'Penguin Temperature Data' }
                 },
                 scales: {
                   y: { beginAtZero: true }
@@ -218,6 +218,10 @@ function App() {
             <p>Min: {stats.min.toFixed(2)}°C</p>
           </div>
         )}
+        <a href="https://server-api-609n.onrender.com/downloadTempData" download>
+        <button>Download Temperature CSV</button>
+        </a>
+
       </div>
     </div>
   );

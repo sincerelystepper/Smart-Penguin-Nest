@@ -35,10 +35,10 @@ app.post('/addTemp', async (req, res) => { // Post request to send temperature d
     }
 
     await collection.insertOne(data);
-    res.status(200).send("✅ Data inserted successfully");
+    res.status(200).send("Data inserted successfully");
   } catch (err) {
     console.error("Error inserting data:", err.message);
-    res.status(500).send("❌ Error inserting data");
+    res.status(500).send("Error inserting data");
   }
 });
 
@@ -114,13 +114,37 @@ app.get('/tempData', async (req, res) => {
     res.status(200).json(data);
   } catch (err) {
     console.error("Error fetching data:", err.message);
-    res.status(500).send("❌ Error fetching data");
+    res.status(500).send("Error fetching data");
   }
 });
 
+app.get('/downloadTempData', async (req, res) => {
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Temperature");
+
+    const data = await collection.find({}).sort({ timestamp: 1 }).toArray();
+
+    if (!data.length) {
+      return res.status(404).send("No data available to download.");
+    }
+
+    const fields = ['temperature', 'timestamp'];
+    const parser = new Parser({ fields });
+    const csv = parser.parse(data);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('temperature_data.csv');
+    return res.send(csv);
+  } catch (err) {
+    console.error("CSV Download Error:", err.message);
+    res.status(500).send("Error generating CSV file");
+  }
+});
 
 app.get('/', (req, res) => {
-  res.send("👋 API is up and running");
+  res.send("API is up and running");
 });
 
 app.listen(port, '0.0.0.0', () => {
