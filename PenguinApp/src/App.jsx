@@ -269,40 +269,38 @@ function App() {
       )}
 
       {/* --- Chart and Statistics Section --- */}
-        <div style={{ width: '100%', maxWidth: '3000px', height: '533px', minWidth: '320px' }}>
-  {chartData ? (
-    <Line
-      data={chartData}
-      options={{
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: true },
-          title: { display: true, text: 'Penguin Temperature Data' }
-        },
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }}
-    />
-  ) : (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      background: 'rgba(255,0,0,0.1)',
-      border: '3px solid red',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'red',
-      fontWeight: 'bold',
-      fontSize: '2rem'
-    }}>
-      Chart Placeholder
-    </div>
-  )}
-</div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+        {/* --- Chart --- */}
+        <div
+          style={{
+            width: '100%',
+            minWidth: '1000px',
+            maxWidth: '3000px',
+            height: '533px',
+            flex: 1
+          }}
+        >
+          {chartData ? (
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: true },
+                  title: { display: true, text: 'Penguin Temperature Data' }
+                },
+                scales: {
+                  y: { beginAtZero: true }
+                }
+              }}
+            />
+          ) : (
+            <p>No data for this range</p>
+          )}
+        </div>
 
+        {/* --- Statistics and Download Section --- */}
         <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {/* --- Statistics --- */}
           {stats && (
@@ -383,6 +381,7 @@ function App() {
           </div>
         </div>
       </div>
+    </div>
   );
 }
 
