@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
 
@@ -145,81 +146,117 @@ function App() {
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      paddingLeft: 0,
+      paddingRight: 0
     }}>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <div style={{ marginBottom: '20px' }}>
-        <label>Select Range: </label>
-        <select value={rangeType} onChange={(e) => setRangeType(e.target.value)}>
-          <option value="day">Day</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-          <option value="custom">Custom Range</option>
-        </select>
-      </div>
+<div style={{ display: 'inline-flex', marginBottom: '20px' }}>
+  <div
+    style={{
+      padding: '0px 12px',
+      border: '1px solid #0077cc',
+      borderRight: 'none',
+      borderRadius: '5px 0 0 5px',
+      background: '#00aaff',
+      color: 'white',
+      fontWeight: 'bold',
+      display: 'flex',
+      alignItems: 'center'
+    }}
+  >
+    Select Range:
+  </div>
+  <select
+    value={rangeType}
+    onChange={(e) => setRangeType(e.target.value)}
+    style={{
+      padding: '10px 5px',
+      border: '1px solid #0077cc',
+      borderLeft: 'none',
+      borderRadius: '0 5px 5px 0',
+      background: '#ffffff',
+      color: '#333',
+      cursor: 'pointer',
+      outline: 'none'
+    }}
+  >
+    <option value="day">Day</option>
+    <option value="month">Month</option>
+    <option value="year">Year</option>
+    <option value="custom">Custom Range</option>
+  </select>
+</div>
 
-      {rangeType == "day" && (
-        <div style={{ marginBottom: '20px' }}>
-          <DatePicker
-            selected={startDate}
-            onChange={date => {
-              setStartDate(date);
-              setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1));
-            }}
-            dateFormat="yyyy-MM-dd"
-          />
-        </div>
-      )}
 
-      {rangeType == "month" && (
-        <div style={{ marginBottom: '20px' }}>
-          <DatePicker
-            selected={startDate}
-            onChange={date => {
-              const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-              const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-              setStartDate(startOfMonth);
-              setEndDate(endOfMonth);
-            }}
-            dateFormat="yyyy-MM"
-            showMonthYearPicker
-          />
-        </div>
-      )}
+      {rangeType === "day" && (
+  <div style={{ marginBottom: '20px', display: 'inline-block' , }}>
+    <DatePicker
+      selected={startDate}
+      onChange={date => {
+        setStartDate(date);
+        setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1));
+      }}
+      dateFormat="yyyy-MM-dd"
+      className="custom-datepicker"
+    />
+  </div>
+)}
 
-      {rangeType == "year" && (
-        <div style={{ marginBottom: '20px' }}>
-          <DatePicker
-            selected={startDate}
-            onChange={date => {
-              const startOfYear = new Date(date.getFullYear(), 0, 1);
-              const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
-              setStartDate(startOfYear);
-              setEndDate(endOfYear);
-            }}
-            dateFormat="yyyy"
-            showYearPicker
-          />
-        </div>
-      )}
+{rangeType === "month" && (
+  <div style={{ marginBottom: '20px', display: 'inline-block' }}>
+    <DatePicker
+      selected={startDate}
+      onChange={date => {
+        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+        setStartDate(startOfMonth);
+        setEndDate(endOfMonth);
+      }}
+      dateFormat="yyyy-MM"
+      showMonthYearPicker
+      className="custom-datepicker"
+    />
+  </div>
+)}
 
-      {rangeType == "custom" && (
-        <div style={{ marginBottom: '20px' }}>
-          <DatePicker
-            selected={startDate}
-            onChange={date => setStartDate(date)}
-            showTimeSelect
-            dateFormat="Pp"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={date => setEndDate(date)}
-            showTimeSelect
-            dateFormat="Pp"
-          />
-        </div>
-      )}
+{rangeType === "year" && (
+  <div style={{ marginBottom: '20px', display: 'inline-block' }}>
+    <DatePicker
+      selected={startDate}
+      onChange={date => {
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+        setStartDate(startOfYear);
+        setEndDate(endOfYear);
+      }}
+      dateFormat="yyyy"
+      showYearPicker
+      className="custom-datepicker"
+    />
+  </div>
+)}
+
+{rangeType === "custom" && (
+  <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+    <DatePicker
+      selected={startDate}
+      onChange={date => setStartDate(date)}
+      showTimeSelect
+      dateFormat="Pp"
+      className="custom-datepicker"
+    />
+    <DatePicker
+      selected={endDate}
+      onChange={date => setEndDate(date)}
+      showTimeSelect
+      dateFormat="Pp"
+      className="custom-datepicker"
+    />
+  </div>
+)}
+
 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
         <div style={{ width: '1600px', height: '533px' }}>
@@ -254,50 +291,70 @@ function App() {
             </>
           )}
           
-        <div style={{ position: 'relative', display: 'inline-flex' }}>
-  <button
-    onClick={handleDownloadCSV}
-    style={{ padding: '10px 12px', border: '1px solid #ccc', borderRight: 'none', borderRadius: '5px 0 0 5px', background: '#00aaff', color: 'white', cursor: 'pointer' }}
-  >
-    {downloadType === 'all' ? 'Download All CSV' : 'Download Filtered CSV'}
-  </button>
+          <div style={{ position: 'relative', display: 'inline-flex' }}>
+            <button
+              onClick={handleDownloadCSV}
+              style={{ padding: '10px 12px', border: '1px solid #0077cc', borderRight: 'none', borderRadius: '5px 0 0 5px', background: '#00aaff', color: 'white', cursor: 'pointer' }}
+            >
+              {downloadType === 'all' ? 'Download All CSV' : 'Download Filtered CSV'}
+            </button>
 
-  <div style={{ position: 'relative' }}>
-    <button
-      onClick={() => setShowDropdown(!showDropdown)}
-      style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '0 5px 5px 0', background: '#00aaff', color: 'white', cursor: 'pointer' }}
-    >
-      ▼
-    </button>
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{ padding: '10px', border: '1px solid #0077cc', borderRadius: '0 5px 5px 0', background: '#00aaff', color: 'white', cursor: 'pointer' }}
+              >
+                ▼
+              </button>
 
-    {showDropdown && (
-      <div
-        style={{
-          position: 'absolute',
-          top: '100%',
-          right: 0,
-          background: 'white',
-          border: '1px solid #ccc',
-          zIndex: 1000,
-          minWidth: '180px',
-        }}
-      >
-        <div
-          onClick={() => { setDownloadType('filtered'); setShowDropdown(false); }}
-          style={{ padding: '8px 12px', cursor: 'pointer', background: downloadType === 'filtered' ? '#f0f0f0' : 'white' }}
-        >
-          Download Filtered CSV
-        </div>
-        <div
-          onClick={() => { setDownloadType('all'); setShowDropdown(false); }}
-          style={{ padding: '8px 12px', cursor: 'pointer', background: downloadType === 'all' ? '#f0f0f0' : 'white' }}
-        >
-          Download All CSV
-        </div>
-      </div>
-    )}
-  </div>
-</div>
+              {showDropdown && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    background: '#00aaff',
+                    border: '1px solid #0077cc',
+                    zIndex: 1000,
+                    minWidth: '180px',
+                    color: 'white',
+                    borderRadius: '0 0 5px 5px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <div
+                    onClick={() => { setDownloadType('filtered'); setShowDropdown(false); }}
+                    style={{
+                      padding: '10px 16px',
+                      cursor: 'pointer',
+                      background: downloadType === 'filtered' ? '#0077cc' : 'transparent',
+                      color: 'white',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#0077cc'}
+                    onMouseLeave={e => e.currentTarget.style.background = downloadType === 'filtered' ? '#0077cc' : 'transparent'}
+                  >
+                    Download Filtered CSV
+                  </div>
+                  <div
+                    onClick={() => { setDownloadType('all'); setShowDropdown(false); }}
+                    style={{
+                      padding: '10px 16px',
+                      cursor: 'pointer',
+                      background: downloadType === 'all' ? '#0077cc' : 'transparent',
+                      color: 'white',
+                      transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#0077cc'}
+                    onMouseLeave={e => e.currentTarget.style.background = downloadType === 'all' ? '#0077cc' : 'transparent'}
+                  >
+                    Download All CSV
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
         </div>
 

@@ -40,3 +40,34 @@
 .read-the-docs {
   color: #888;
 }
+
+.custom-datepicker {
+  padding: 10px 0px;
+  border: 1px solid #0077cc;
+  border-radius: 5px;
+  background-color: #00aaff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  width: fit-content;
+}
+
+/* This removes the default styling inside DatePicker's input field */
+.react-datepicker__input-container input {
+  background-color: #00aaff;
+  border: none;
+  outline: none;
+  color: white;
+  font-weight: bold;
+  text-align: center; /* center text */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* horizontally center text */
+  width: auto;
+}
+
+/* Optional: change calendar icon color (from react-datepicker default) */
+.react-datepicker__calendar-icon {
+  filter: invert(1); /* turns it white-ish */
+  margin-left: 5px;
+}
