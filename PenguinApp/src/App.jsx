@@ -47,7 +47,7 @@ function App() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   // --- API URL (Override for Render) ---
-  const BASE_API = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
+  const BASE_API = 'https://server-api-609n.onrender.com'; // or your Render URL http://localhost:3000/tempData
 
   
   // --- Fetch Data and Calculate Stats ---
@@ -71,7 +71,7 @@ function App() {
       } else if (rangeType == 'month') {
         const year = startDate.getFullYear();
         const month = startDate.getMonth() + 1;
-        res = await axios.get(`${BASE_API}/dailyAverage`, { params: { year, month } });
+        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year, month } });
         const data = res.data;
 
         labels = data.map(d => `${d._id.day}`);
