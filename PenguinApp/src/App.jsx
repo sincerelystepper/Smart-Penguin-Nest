@@ -252,13 +252,50 @@ function App() {
             </>
           )}
           
-        <div>
-          <select value={downloadType} onChange={(e) => setDownloadType(e.target.value)}>
-            <option value="filtered">Download Current Range</option>
-            <option value="all">Download All Data</option>
-          </select>
-          <button onClick={handleDownloadCSV}>Download CSV</button>
+        <div style={{ position: 'relative', display: 'inline-flex' }}>
+  <button
+    onClick={handleDownloadCSV}
+    style={{ padding: '10px 12px', border: '1px solid #ccc', borderRight: 'none', borderRadius: '5px 0 0 5px', background: '#00aaff', color: 'white', cursor: 'pointer' }}
+  >
+    {downloadType === 'all' ? 'Download All CSV' : 'Download Filtered CSV'}
+  </button>
+
+  <div style={{ position: 'relative' }}>
+    <button
+      onClick={() => setShowDropdown(!showDropdown)}
+      style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '0 5px 5px 0', background: '#00aaff', color: 'white', cursor: 'pointer' }}
+    >
+      ▼
+    </button>
+
+    {showDropdown && (
+      <div
+        style={{
+          position: 'absolute',
+          top: '100%',
+          right: 0,
+          background: 'white',
+          border: '1px solid #ccc',
+          zIndex: 1000,
+          minWidth: '180px',
+        }}
+      >
+        <div
+          onClick={() => { setDownloadType('filtered'); setShowDropdown(false); }}
+          style={{ padding: '8px 12px', cursor: 'pointer', background: downloadType === 'filtered' ? '#f0f0f0' : 'white' }}
+        >
+          Download Filtered CSV
         </div>
+        <div
+          onClick={() => { setDownloadType('all'); setShowDropdown(false); }}
+          style={{ padding: '8px 12px', cursor: 'pointer', background: downloadType === 'all' ? '#f0f0f0' : 'white' }}
+        >
+          Download All CSV
+        </div>
+      </div>
+    )}
+  </div>
+</div>
 
         </div>
 
