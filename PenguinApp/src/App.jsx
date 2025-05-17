@@ -47,26 +47,48 @@ function App() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   // --- API URL (Override for Render) ---
-  const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
+  const BASE_API = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
 
   
   // --- Fetch Data and Calculate Stats ---
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const params = rangeType != "all" && startDate && endDate
+    try {
+      let res;
+      let labels = [];
+      let temps = [];
+
+      if (rangeType == 'year') {
+        const year = startDate.getFullYear();
+        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year } });
+        const data = res.data;
+
+        labels = data.map(d =>
+          new Date(year, d._id.month - 1).toLocaleString('default', { month: 'short' })
+        );
+        temps = data.map(d => d.avgTemperature);
+
+      } else if (rangeType == 'month') {
+        const year = startDate.getFullYear();
+        const month = startDate.getMonth() + 1;
+        res = await axios.get(`${BASE_API}/dailyAverage`, { params: { year, month } });
+        const data = res.data;
+
+        labels = data.map(d => `${d._id.day}`);
+        temps = data.map(d => d.avgTemperature);
+
+      } else {
+        const params = rangeType != 'all' && startDate && endDate
           ? {
               start: startDate.toISOString(),
               end: endDate.toISOString()
             }
-          : {}; // Empty params for all time
+          : {};
+        res = await axios.get(`${BASE_API}/tempData`, { params });
+        const data = res.data;
 
-        const res = await axios.get(API_URL, { params }); // Fetch data from the API
-        const data = res.data; // Parse the response data
-
-        // --- Prepare Chart Data ---
-        const labels = data.map(d => 
-          new Date(d.timestamp).toLocaleString([], { // Format date and time
+        labels = data.map(d =>
+          new Date(d.timestamp).toLocaleString([], {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -75,48 +97,47 @@ function App() {
             second: '2-digit'
           })
         );
-        const temps = data.map(d => d.temperature); // Extract temperature values
-
-        if (data.length > 0) {
-          setChartData({
-            labels,
-            datasets: [
-              {
-                label: 'Temperature (°C)',
-                data: temps,
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.3,
-                fill: true,
-                pointRadius: 5
-              }
-            ]
-          });
-
-          // --- Calculate Statistics ---
-          const mean = temps.reduce((a, b) => a + b, 0) / temps.length; // Calculate mean
-          const sortedTemps = [...temps].sort((a, b) => a - b); // Sort temperatures for median calculation
-          const median =
-            sortedTemps.length % 2 === 0
-              ? (sortedTemps[sortedTemps.length / 2 - 1] + sortedTemps[sortedTemps.length / 2]) / 2
-              : sortedTemps[Math.floor(sortedTemps.length / 2)]; // Calculate median
-          const max = Math.max(...temps); // Calculate max temperature
-          const min = Math.min(...temps); // Calculate min temperature
-          const stdDev = Math.sqrt(temps.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / temps.length); // Calculate standard deviation
-
-          setStats({ mean, median, max, min, stdDev }); // Set stats state
-        } else {
-          setChartData(null);
-          setStats(null);
-        }
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load data");
+        temps = data.map(d => d.temperature);
       }
-    };
 
-    fetchData();
-  }, [startDate, endDate, rangeType]);
+      if (temps.length > 0) {
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: 'Temperature (°C)',
+              data: temps,
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              tension: 0.3,
+              fill: true,
+              pointRadius: 5
+            }
+          ]
+        });
+
+        const mean = temps.reduce((a, b) => a + b, 0) / temps.length;
+        const sortedTemps = [...temps].sort((a, b) => a - b);
+        const median = sortedTemps.length % 2 === 0
+          ? (sortedTemps[sortedTemps.length / 2 - 1] + sortedTemps[sortedTemps.length / 2]) / 2
+          : sortedTemps[Math.floor(sortedTemps.length / 2)];
+        const max = Math.max(...temps);
+        const min = Math.min(...temps);
+        const stdDev = Math.sqrt(temps.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / temps.length);
+
+        setStats({ mean, median, max, min, stdDev });
+      } else {
+        setChartData(null);
+        setStats(null);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to load data");
+    }
+  };
+
+  fetchData();
+}, [startDate, endDate, rangeType]);
 
   // --- CSV Download Handler ---
   const handleDownloadCSV = async () => {
