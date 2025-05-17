@@ -177,12 +177,13 @@ function App() {
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
+  animation: rangeType === 'custom' ? false : true, // disable animations for large custom ranges
   plugins: {
     legend: { display: true },
     title: {
       display: true,
       text: 'Penguin Temperature Data',
-      fontSize: 20
+      fontSize: 50
     },
     tooltip: {
       enabled: rangeType !== 'custom' // disable tooltips in custom mode
@@ -190,7 +191,8 @@ const chartOptions = {
   },
   elements: {
     point: {
-      radius: rangeType === 'custom' ? 0 : 5 // hide points in custom mode
+      radius: rangeType === 'custom' ? 0 : 5, // hide points in custom mode
+      hoverRadius: rangeType === 'custom' ? 0 : 6
     }
   },
   scales: {
