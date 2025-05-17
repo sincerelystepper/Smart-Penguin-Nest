@@ -38,6 +38,8 @@ function App() {
   const [stats, setStats] = useState(null);
 
   const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
+  const [showDropdown, setShowDropdown] = useState(false);
+
 
   const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
 
