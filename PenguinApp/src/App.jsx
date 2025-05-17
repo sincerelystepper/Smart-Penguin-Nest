@@ -37,7 +37,7 @@ function App() {
 
   const [stats, setStats] = useState(null);
 
-  const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/data
+  const API_URL = 'http://localhost:3000/tempData'; // or your Render URL https://server-api-609n.onrender.com/tempData
 
   useEffect(() => {
     const fetchData = async () => {
@@ -219,13 +219,36 @@ function App() {
               <p>Min: {stats.min.toFixed(2)}°C</p>
             </>
           )}
-          <a href="https://server-api-609n.onrender.com/downloadTempData" download>
-            <button>Download Temperature CSV</button>
-          </a>
+
+        <button onClick={handleDownloadCSV}>Download Temperature CSV</button>
+
         </div>
       </div>
     </div>
   );
 }
+
+const handleDownloadCSV = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/downloadTempData'); // loacl url: https://server-api-609n.onrender.com/downloadTempData
+    if (!response.ok) {
+      throw new Error('Failed to fetch CSV');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'temperature_data.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('CSV Download Error:', err.message);
+  }
+};
+
 
 export default App;

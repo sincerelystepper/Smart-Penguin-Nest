@@ -69,7 +69,7 @@ app.post('/addFoodMass', async (req, res) => { // Post request to send food mass
   }
 });
 
-app.post('/addBodySize', async (req, res) => {
+app.post('/addBodySize', async (req, res) => { // Post request to send body size data
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data"); // Explicitly call db() on the client
@@ -92,7 +92,7 @@ app.post('/addBodySize', async (req, res) => {
   }
 });
 
-app.get('/tempData', async (req, res) => {
+app.get('/tempData', async (req, res) => { // Get request to fetch temperature data
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data");
@@ -121,7 +121,7 @@ app.get('/tempData', async (req, res) => {
   }
 });
 
-app.get('/downloadTempData', async (req, res) => {
+app.get('/downloadTempData', async (req, res) => { // Get request to download temperature data as CSV
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data");
