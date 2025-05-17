@@ -174,6 +174,32 @@ function App() {
     }
   };
 
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: true },
+    title: {
+      display: true,
+      text: 'Penguin Temperature Data',
+      fontSize: 20
+    },
+    tooltip: {
+      enabled: rangeType !== 'custom' // disable tooltips in custom mode
+    }
+  },
+  elements: {
+    point: {
+      radius: rangeType === 'custom' ? 0 : 5 // hide points in custom mode
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true
+    }
+  }
+};
+
   // --- Render UI ---
   return (
     <div style={{
@@ -310,17 +336,7 @@ function App() {
           {chartData ? (
             <Line
               data={chartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: true },
-                  title: { display: true, text: 'Penguin Temperature Data', fontSize: 20 }
-                },
-                scales: {
-                  y: { beginAtZero: true }
-                }
-              }}
+              options={chartOptions}
             />
           ) : (
             <p>No data for this range</p>
