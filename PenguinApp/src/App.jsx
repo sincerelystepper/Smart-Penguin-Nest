@@ -236,7 +236,6 @@ function App() {
 
     </div>
   );
-}
 
 const handleDownloadCSV = async () => {
   let url = '';
@@ -267,5 +266,5 @@ const handleDownloadCSV = async () => {
     alert("Failed to download CSV");
   }
 };
-
+}
 export default App;
