@@ -107,6 +107,36 @@ function App() {
     fetchData();
   }, [startDate, endDate, rangeType]);
 
+  const handleDownloadCSV = async () => {
+    let url = '';
+    if (downloadType === 'all') {
+      url = 'https://server-api-609n.onrender.com/downloadTempData'; // URL for all data download
+    } else {
+      const params = new URLSearchParams({
+        start: startDate.toISOString(),
+        end: endDate.toISOString()
+      });
+      url = `https://server-api-609n.onrender.com/downloadTempDataFiltered?${params.toString()}`; // URL for filtered data download
+    }
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Download failed");
+      const blob = await response.blob();
+      const urlBlob = window.URL.createObjectURL(blob);
+
+      const link = document.createElement('a');
+      link.href = urlBlob;
+      link.download = downloadType === 'all' ? 'temperature_data.csv' : 'filtered_temperature_data.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("CSV Download Error:", err.message);
+      alert("Failed to download CSV");
+    }
+  };
+
   return (
     <div style={{
       display: 'flex',
@@ -236,35 +266,6 @@ function App() {
 
     </div>
   );
-
-const handleDownloadCSV = async () => {
-  let url = '';
-  if (downloadType === 'all') {
-    url = 'https://server-api-609n.onrender.com/downloadTempData'; // Or use Render URL
-  } else {
-    const params = new URLSearchParams({
-      start: startDate.toISOString(),
-      end: endDate.toISOString()
-    });
-    url = `https://server-api-609n.onrender.com/downloadTempDataFiltered?${params.toString()}`;
-  }
-
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Download failed");
-    const blob = await response.blob();
-    const urlBlob = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = urlBlob;
-    link.download = downloadType === 'all' ? 'temperature_data.csv' : 'filtered_temperature_data.csv';
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (err) {
-    console.error("CSV Download Error:", err.message);
-    alert("Failed to download CSV");
-  }
-};
 }
+
 export default App;
