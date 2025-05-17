@@ -179,6 +179,88 @@ app.get('/downloadTempDataFiltered', async (req, res) => {
   }
 });
 
+app.get('/api/temperature-averages', async (req, res) => {
+  const { rangeType, year, month } = req.query;
+
+  if (!year || isNaN(year)) {
+    return res.status(400).json({ error: "Missing or invalid year parameter" });
+  }
+
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Temperature");
+
+    let data;
+
+    if (rangeType === 'year') {
+      data = await getMonthlyAverage(collection, parseInt(year));
+    } else if (rangeType === 'month') {
+      if (!month || isNaN(month)) {
+        return res.status(400).json({ error: "Missing or invalid month parameter" });
+      }
+      data = await getDailyAverage(collection, parseInt(year), parseInt(month));
+    } else {
+      return res.status(400).json({ error: 'Unsupported rangeType' });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Aggregation error:", err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+async function getMonthlyAverage(collection, year) {
+  return collection.aggregate([
+    {
+      $match: {
+        timestamp: {
+          $gte: new Date(`${year}-01-01`),
+          $lt: new Date(`${year + 1}-01-01`)
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { month: { $month: "$timestamp" } },
+        avgTemperature: { $avg: "$temperature" }
+      }
+    },
+    { $sort: { "_id.month": 1 } }
+  ]).toArray();
+}
+
+async function getDailyAverage(collection, year, month) {
+  const startDate = new Date(year, month - 1, 1);
+  const endDate = new Date(year, month, 1);
+  
+  return collection.aggregate([
+    {
+      $match: {
+        timestamp: {
+          $gte: startDate,
+          $lt: endDate
+        }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          year: { $year: "$timestamp" },
+          month: { $month: "$timestamp" },
+          day: { $dayOfMonth: "$timestamp" }
+        },
+        avgTemperature: { $avg: "$temperature" }
+      }
+    },
+    { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+  ]).toArray();
+}
+
+async function getYearlyAverage(collection) {
+  // Example if needed — similar pattern
+}
 
 app.get('/', (req, res) => {
   res.send("API is up and running");

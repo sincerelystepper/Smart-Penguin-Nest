@@ -49,6 +49,7 @@ function App() {
   // --- API URL (Override for Render) ---
   const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
 
+  
   // --- Fetch Data and Calculate Stats ---
   useEffect(() => {
     const fetchData = async () => {
