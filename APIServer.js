@@ -146,6 +146,40 @@ app.get('/downloadTempData', async (req, res) => { // Get request to download te
   }
 });
 
+app.get('/downloadTempDataFiltered', async (req, res) => {
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Temperature");
+
+    const { start, end } = req.query;
+    let filter = {};
+
+    if (start && end) {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        filter.timestamp = { $gte: startDate, $lte: endDate };
+      }
+    }
+
+    const data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
+    if (!data.length) return res.status(404).send("No data to download");
+
+    const fields = ['temperature', 'timestamp'];
+    const parser = new Parser({ fields });
+    const csv = parser.parse(data);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('filtered_temperature_data.csv');
+    return res.send(csv);
+  } catch (err) {
+    console.error("CSV Download Error:", err.message);
+    res.status(500).send("Error generating CSV");
+  }
+});
+
+
 app.get('/', (req, res) => {
   res.send("API is up and running");
 });

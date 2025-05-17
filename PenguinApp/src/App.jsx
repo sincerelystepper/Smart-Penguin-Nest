@@ -37,7 +37,7 @@ function App() {
 
   const [stats, setStats] = useState(null);
 
-  const API_URL = 'http://localhost:3000/tempData'; // or your Render URL https://server-api-609n.onrender.com/tempData
+  const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
 
   useEffect(() => {
     const fetchData = async () => {
@@ -219,36 +219,56 @@ function App() {
               <p>Min: {stats.min.toFixed(2)}°C</p>
             </>
           )}
-
-        <button onClick={handleDownloadCSV}>Download Temperature CSV</button>
+          
+        <div>
+          <select value={downloadType} onChange={(e) => setDownloadType(e.target.value)}>
+            <option value="filtered">Download Current Range</option>
+            <option value="all">Download All Data</option>
+          </select>
+          <button onClick={handleDownloadCSV}>Download CSV</button>
+        </div>
 
         </div>
+
       </div>
+
     </div>
   );
 }
 
 const handleDownloadCSV = async () => {
+  let url = '';
+  if (downloadType === 'all') {
+    url = 'https://server-api-609n.onrender.com/downloadTempData'; // Or use Render URL
+  } else {
+    const params = new URLSearchParams({
+      start: startDate.toISOString(),
+      end: endDate.toISOString()
+    });
+    url = `https://server-api-609n.onrender.com/downloadTempDataFiltered?${params.toString()}`;
+  }
+
   try {
-    const response = await fetch('http://localhost:3000/downloadTempData'); // loacl url: https://server-api-609n.onrender.com/downloadTempData
-    if (!response.ok) {
-      throw new Error('Failed to fetch CSV');
-    }
-
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Download failed");
     const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+    const urlBlob = window.URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'temperature_data.csv';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
+    const link = document.createElement('a');
+    link.href = urlBlob;
+    link.download = downloadType === 'all' ? 'temperature_data.csv' : 'filtered_temperature_data.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   } catch (err) {
-    console.error('CSV Download Error:', err.message);
+    console.error("CSV Download Error:", err.message);
+    alert("Failed to download CSV");
   }
 };
+
+
+const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
+
 
 
 export default App;
