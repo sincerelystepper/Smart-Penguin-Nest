@@ -109,15 +109,22 @@ function App() {
           labels,
           datasets: [
             {
-              label: 'Temperature (°C)',
-              data: temps,
-              borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              tension: 0.3,
-              fill: true,
-              pointRadius: 5
-            }
-          ]
+            label: 'Temperature (°C)',
+            data: temps,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: rangeType === 'custom' ? 0 : 5,
+            pointHoverRadius: rangeType === 'custom' ? 0 : 6,
+            pointBackgroundColor: rangeType === 'custom' ? 'rgba(0,0,0,0)' : 'rgba(75, 192, 192, 1)',
+            pointBorderColor: 'rgba(0,0,0,0)',
+            pointHitRadius: 0,
+            pointHoverBackgroundColor: 'rgba(0,0,0,0)',
+            pointHoverBorderColor: 'rgba(0,0,0,0)',
+            borderWidth: 2
+          } 
+          ]   
         });
 
         const mean = temps.reduce((a, b) => a + b, 0) / temps.length;
@@ -177,23 +184,31 @@ function App() {
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  animation: rangeType === 'custom' ? false : true, // disable animations for large custom ranges
+  animation: rangeType === 'custom' ? false : {
+  duration: 1000 }, // disable animations for large custom ranges
   plugins: {
-    legend: { display: true },
-    title: {
-      display: true,
-      text: 'Penguin Temperature Data',
-      fontSize: 50
-    },
-    tooltip: {
-      enabled: rangeType !== 'custom' // disable tooltips in custom mode
-    }
+  legend: { display: true },
+  title: {
+    display: true,
+    text: 'Penguin Temperature Data',
+    font: { size: 20 }
   },
+  tooltip: {
+    enabled: rangeType !== 'custom' // disable tooltips in custom mode
+  }
+},
+interaction: {
+  mode: rangeType === 'custom' ? null : 'nearest',
+  intersect: false
+},
   elements: {
-    point: {
-      radius: rangeType === 'custom' ? 0 : 5, // hide points in custom mode
-      hoverRadius: rangeType === 'custom' ? 0 : 6
-    }
+  point: {
+    radius: rangeType === 'custom' ? 0 : 5,
+    hoverRadius: rangeType === 'custom' ? 0 : 6,
+    backgroundColor: 'rgba(0,0,0,0)',
+    borderColor: 'rgba(0,0,0,0)',
+    hitRadius: 0
+  }
   },
   scales: {
     y: {
