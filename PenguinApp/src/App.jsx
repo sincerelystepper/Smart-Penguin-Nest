@@ -1,11 +1,14 @@
+// --- Imports ---
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './App.css';
 
+// --- API URL Setup ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
 
+// --- Chart.js Imports and Registration ---
 import {
   Chart as ChartJS,
   LineElement,
@@ -28,7 +31,9 @@ ChartJS.register(
   Legend
 );
 
+// --- Main App Component ---
 function App() {
+  // --- State Variables ---
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
   const [rangeType, setRangeType] = useState("year"); // Default to year
@@ -41,9 +46,10 @@ function App() {
   const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
   const [showDropdown, setShowDropdown] = useState(false);
 
-
+  // --- API URL (Override for Render) ---
   const API_URL = 'https://server-api-609n.onrender.com/tempData'; // or your Render URL http://localhost:3000/tempData
 
+  // --- Fetch Data and Calculate Stats ---
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,6 +63,7 @@ function App() {
         const res = await axios.get(API_URL, { params }); // Fetch data from the API
         const data = res.data; // Parse the response data
 
+        // --- Prepare Chart Data ---
         const labels = data.map(d => 
           new Date(d.timestamp).toLocaleString([], { // Format date and time
             year: 'numeric',
@@ -85,7 +92,7 @@ function App() {
             ]
           });
 
-          // Calculate stats
+          // --- Calculate Statistics ---
           const mean = temps.reduce((a, b) => a + b, 0) / temps.length; // Calculate mean
           const sortedTemps = [...temps].sort((a, b) => a - b); // Sort temperatures for median calculation
           const median =
@@ -110,6 +117,7 @@ function App() {
     fetchData();
   }, [startDate, endDate, rangeType]);
 
+  // --- CSV Download Handler ---
   const handleDownloadCSV = async () => {
     let url = '';
     if (downloadType === 'all') {
@@ -140,6 +148,7 @@ function App() {
     }
   };
 
+  // --- Render UI ---
   return (
     <div style={{
       display: 'flex',
@@ -150,137 +159,152 @@ function App() {
       paddingLeft: 0,
       paddingRight: 0
     }}>
+      {/* --- Error Message --- */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-<div style={{ display: 'inline-flex', marginBottom: '20px' }}>
-  <div
-    style={{
-      padding: '0px 12px',
-      border: '1px solid #0077cc',
-      borderRight: 'none',
-      borderRadius: '5px 0 0 5px',
-      background: '#00aaff',
-      color: 'white',
-      fontWeight: 'bold',
+      {/* --- Range Selector --- */}
+      <div style={{ display: 'inline-flex', marginBottom: '20px' }}>
+        <div
+          style={{
+            padding: '0px 12px',
+            border: '1px solid #0077cc',
+            borderRight: 'none',
+            borderRadius: '5px 0 0 5px',
+            background: '#00aaff',
+            color: 'white',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          Select Range:
+        </div>
+        <select
+          value={rangeType}
+          onChange={(e) => setRangeType(e.target.value)}
+          style={{
+            padding: '10px 5px',
+            border: '1px solid #0077cc',
+            borderLeft: 'none',
+            borderRadius: '0 5px 5px 0',
+            background: '#ffffff',
+            color: '#333',
+            cursor: 'pointer',
+            outline: 'none'
+          }}
+        >
+          <option value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+
+      {/* --- Date Pickers for Each Range Type --- */}
+      {rangeType === "day" && (
+        <div style={{ marginBottom: '20px', display: 'inline-block' }}>
+          <DatePicker
+            selected={startDate}
+            onChange={date => {
+              setStartDate(date);
+              setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1));
+            }}
+            dateFormat="yyyy-MM-dd"
+            className="custom-datepicker"
+          />
+        </div>
+      )}
+
+      {rangeType === "month" && (
+        <div style={{ marginBottom: '20px', display: 'inline-block' }}>
+          <DatePicker
+            selected={startDate}
+            onChange={date => {
+              const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+              const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+              setStartDate(startOfMonth);
+              setEndDate(endOfMonth);
+            }}
+            dateFormat="yyyy-MM"
+            showMonthYearPicker
+            className="custom-datepicker"
+          />
+        </div>
+      )}
+
+      {rangeType === "year" && (
+        <div style={{ marginBottom: '20px', display: 'inline-block' }}>
+          <DatePicker
+            selected={startDate}
+            onChange={date => {
+              const startOfYear = new Date(date.getFullYear(), 0, 1);
+              const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+              setStartDate(startOfYear);
+              setEndDate(endOfYear);
+            }}
+            dateFormat="yyyy"
+            showYearPicker
+            className="custom-datepicker"
+          />
+        </div>
+      )}
+
+      {rangeType === "custom" && (
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+          <DatePicker
+            selected={startDate}
+            onChange={date => setStartDate(date)}
+            showTimeSelect
+            dateFormat="Pp"
+            className="custom-datepicker"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={date => setEndDate(date)}
+            showTimeSelect
+            dateFormat="Pp"
+            className="custom-datepicker"
+          />
+        </div>
+      )}
+
+      {/* --- Chart and Statistics Section --- */}
+        <div style={{ width: '100%', maxWidth: '3000px', height: '533px', minWidth: '320px' }}>
+  {chartData ? (
+    <Line
+      data={chartData}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: true },
+          title: { display: true, text: 'Penguin Temperature Data' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }}
+    />
+  ) : (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      background: 'rgba(255,0,0,0.1)',
+      border: '3px solid red',
       display: 'flex',
-      alignItems: 'center'
-    }}
-  >
-    Select Range:
-  </div>
-  <select
-    value={rangeType}
-    onChange={(e) => setRangeType(e.target.value)}
-    style={{
-      padding: '10px 5px',
-      border: '1px solid #0077cc',
-      borderLeft: 'none',
-      borderRadius: '0 5px 5px 0',
-      background: '#ffffff',
-      color: '#333',
-      cursor: 'pointer',
-      outline: 'none'
-    }}
-  >
-    <option value="day">Day</option>
-    <option value="month">Month</option>
-    <option value="year">Year</option>
-    <option value="custom">Custom Range</option>
-  </select>
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'red',
+      fontWeight: 'bold',
+      fontSize: '2rem'
+    }}>
+      Chart Placeholder
+    </div>
+  )}
 </div>
 
-
-      {rangeType === "day" && (
-  <div style={{ marginBottom: '20px', display: 'inline-block' , }}>
-    <DatePicker
-      selected={startDate}
-      onChange={date => {
-        setStartDate(date);
-        setEndDate(new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1));
-      }}
-      dateFormat="yyyy-MM-dd"
-      className="custom-datepicker"
-    />
-  </div>
-)}
-
-{rangeType === "month" && (
-  <div style={{ marginBottom: '20px', display: 'inline-block' }}>
-    <DatePicker
-      selected={startDate}
-      onChange={date => {
-        const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
-        setStartDate(startOfMonth);
-        setEndDate(endOfMonth);
-      }}
-      dateFormat="yyyy-MM"
-      showMonthYearPicker
-      className="custom-datepicker"
-    />
-  </div>
-)}
-
-{rangeType === "year" && (
-  <div style={{ marginBottom: '20px', display: 'inline-block' }}>
-    <DatePicker
-      selected={startDate}
-      onChange={date => {
-        const startOfYear = new Date(date.getFullYear(), 0, 1);
-        const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
-        setStartDate(startOfYear);
-        setEndDate(endOfYear);
-      }}
-      dateFormat="yyyy"
-      showYearPicker
-      className="custom-datepicker"
-    />
-  </div>
-)}
-
-{rangeType === "custom" && (
-  <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-    <DatePicker
-      selected={startDate}
-      onChange={date => setStartDate(date)}
-      showTimeSelect
-      dateFormat="Pp"
-      className="custom-datepicker"
-    />
-    <DatePicker
-      selected={endDate}
-      onChange={date => setEndDate(date)}
-      showTimeSelect
-      dateFormat="Pp"
-      className="custom-datepicker"
-    />
-  </div>
-)}
-
-
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-        <div style={{ width: '1600px', height: '533px' }}>
-          {chartData ? (
-            <Line
-              data={chartData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                  legend: { display: true },
-                  title: { display: true, text: 'Penguin Temperature Data' }
-                },
-                scales: {
-                  y: { beginAtZero: true }
-                }
-              }}
-            />
-          ) : (
-            <p>No data for this range</p>
-          )}
-        </div>
-
         <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {/* --- Statistics --- */}
           {stats && (
             <>
               <h3>Statistics</h3>
@@ -290,7 +314,8 @@ function App() {
               <p>Min: {stats.min.toFixed(2)}°C</p>
             </>
           )}
-          
+
+          {/* --- Download CSV Buttons and Dropdown --- */}
           <div style={{ position: 'relative', display: 'inline-flex' }}>
             <button
               onClick={handleDownloadCSV}
@@ -307,6 +332,7 @@ function App() {
                 ▼
               </button>
 
+              {/* --- Dropdown for Download Type --- */}
               {showDropdown && (
                 <div
                   style={{
@@ -355,13 +381,10 @@ function App() {
               )}
             </div>
           </div>
-
         </div>
-
       </div>
-
-    </div>
   );
 }
 
+// --- Export App Component ---
 export default App;
