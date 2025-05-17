@@ -87,16 +87,20 @@ function App() {
         res = await axios.get(`${BASE_API}/tempData`, { params });
         const data = res.data;
 
-        labels = data.map(d =>
-          new Date(d.timestamp).toLocaleString([], {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          })
-        );
+        labels = data.map(d => {
+        const date = new Date(d.timestamp);
+        return rangeType === "day"
+        ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : date.toLocaleString([], {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+});
+
         temps = data.map(d => d.temperature);
       }
 
