@@ -236,6 +236,8 @@ function App() {
   );
 }
 
+const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
+
 const handleDownloadCSV = async () => {
   let url = '';
   if (downloadType === 'all') {
@@ -265,10 +267,5 @@ const handleDownloadCSV = async () => {
     alert("Failed to download CSV");
   }
 };
-
-
-const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
-
-
 
 export default App;
