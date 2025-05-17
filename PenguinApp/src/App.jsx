@@ -155,6 +155,7 @@ function App() {
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh',
+      width: '100%',
       flexDirection: 'column',
       paddingLeft: 0,
       paddingRight: 0
@@ -269,7 +270,7 @@ function App() {
       )}
 
       {/* --- Chart and Statistics Section --- */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
         {/* --- Chart --- */}
         <div
           style={{
