@@ -60,7 +60,7 @@ function App() {
 
       if (rangeType == 'year') {
         const year = startDate.getFullYear();
-        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year } });
+        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year ,rangeType} });
         const data = res.data;
 
         labels = data.map(d =>
@@ -71,7 +71,7 @@ function App() {
       } else if (rangeType == 'month') {
         const year = startDate.getFullYear();
         const month = startDate.getMonth() + 1;
-        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year, month } });
+        res = await axios.get(`${BASE_API}/avgTemp`, { params: { year, month ,rangeType} });
         const data = res.data;
 
         labels = data.map(d => `${d._id.day}`);
@@ -311,7 +311,7 @@ function App() {
                 maintainAspectRatio: false,
                 plugins: {
                   legend: { display: true },
-                  title: { display: true, text: 'Penguin Temperature Data' }
+                  title: { display: true, text: 'Penguin Temperature Data', fontSize: 20 }
                 },
                 scales: {
                   y: { beginAtZero: true }
