@@ -113,12 +113,32 @@ app.get('/tempData', async (req, res) => { // Get request to fetch temperature d
       }
     }
 
-    const data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
-    res.status(200).json(data);
+    let data;
+
+    if (rangeType === 'year') {
+      data = await getMonthlyAverage(collection, parseInt(year));
+    } else if (rangeType === 'month') {
+      if (!month || isNaN(month)) {
+        return res.status(400).json({ error: "Missing or invalid month parameter" });
+      }
+      data = await getDailyAverage(collection, parseInt(year), parseInt(month));
+    } else {
+      data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
+      res.status(200).json(data);
+    }
+
+    res.json(data);
   } catch (err) {
-    console.error("Error fetching data:", err.message);
-    res.status(500).send("Error fetching data");
+    console.error("Aggregation error:", err);
+    res.status(500).json({ error: 'Server error' });
   }
+
+    // const data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
+    // res.status(200).json(data);
+  // } catch (err) {
+  //   console.error("Error fetching data:", err.message);
+  //   res.status(500).send("Error fetching data");
+  // }
 });
 
 app.get('/downloadTempData', async (req, res) => { // Get request to download temperature data as CSV
@@ -179,7 +199,7 @@ app.get('/downloadTempDataFiltered', async (req, res) => {
   }
 });
 
-app.get('/api/temperature-averages', async (req, res) => {
+app.get('/temperature-averages', async (req, res) => {
   const { rangeType, year, month } = req.query;
 
   if (!year || isNaN(year)) {
@@ -256,10 +276,6 @@ async function getDailyAverage(collection, year, month) {
     },
     { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
   ]).toArray();
-}
-
-async function getYearlyAverage(collection) {
-  // Example if needed — similar pattern
 }
 
 app.get('/', (req, res) => {
