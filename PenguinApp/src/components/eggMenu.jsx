@@ -13,7 +13,8 @@ const EggMenu = () => {
         top: '20px',
         left: '20px',
         cursor: 'pointer',
-        width: open ? '450px' : '45px',
+        width: open ? 'min(calc(90vw), 500px)' : '45px',
+        maxWidth: '1500px',
         height: '53px',
         display: 'flex',
         alignItems: 'center',
@@ -37,7 +38,7 @@ const EggMenu = () => {
         }}
       />
       {open && (
-        <nav style={{ marginLeft: '15px', display: 'flex', gap: '15px' }}>
+        <nav style={{ marginLeft: '10px', display: 'flex', gap: 'min(calc(100vw/21.2), 30px)' }}>
           <Link to="/" style={linkStyle}>Home</Link>
           <Link to="/temperature" style={linkStyle}>Temperature</Link>
           <Link to="/foodMass" style={linkStyle}>Food Mass</Link>
@@ -52,6 +53,7 @@ const linkStyle = {
   textDecoration: 'right',
   color: 'White',
   fontWeight: 'bold',
+  fontSize: 'min(calc(100vw / 31.25), 15px)',
   whiteSpace: 'nowrap',
 };
 
