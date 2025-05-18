@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//import './App.css';
+import '../App.css';
+
+import { Link } from 'react-router-dom';
+import EggMenu from '../components/eggMenu'; // Import the EggMenu component
 
 // --- API URL Setup ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
@@ -218,17 +221,25 @@ interaction: {
 };
 
   // --- Render UI ---
+  // Hide caret globally using inline style
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      width: '100%',
-      flexDirection: 'column',
-      paddingLeft: 0,
-      paddingRight: 0
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        width: '100%',
+        flexDirection: 'column',
+        paddingLeft: 0,
+        paddingRight: 0,
+        caretColor: 'transparent' // Hide caret for all children
+      }}
+    >
+      <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+        <EggMenu />
+      </div>
+
       {/* --- Error Message --- */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -260,7 +271,8 @@ interaction: {
             background: '#ffffff',
             color: '#333',
             cursor: 'pointer',
-            outline: 'none'
+            outline: 'none',
+            caretColor: 'transparent' // Hide caret in select
           }}
         >
           <option value="day">Day</option>
@@ -281,6 +293,8 @@ interaction: {
             }}
             dateFormat="yyyy-MM-dd"
             className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
           />
         </div>
       )}
@@ -298,6 +312,8 @@ interaction: {
             dateFormat="yyyy-MM"
             showMonthYearPicker
             className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
           />
         </div>
       )}
@@ -315,6 +331,8 @@ interaction: {
             dateFormat="yyyy"
             showYearPicker
             className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
           />
         </div>
       )}
@@ -327,6 +345,8 @@ interaction: {
             showTimeSelect
             dateFormat="Pp"
             className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
           />
           <DatePicker
             selected={endDate}
@@ -334,6 +354,8 @@ interaction: {
             showTimeSelect
             dateFormat="Pp"
             className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
           />
         </div>
       )}
