@@ -223,7 +223,7 @@ function TemperaturePage() {
   // --- Responsive Styles ---
   const containerStyle = {
     display: 'flex',
-    alignItems: 'stretch',
+    alignItems: 'center',
     minHeight: '100vh',
     width: '100%',
     flexDirection: 'column',
@@ -246,8 +246,8 @@ function TemperaturePage() {
 
   // Chart container with responsive width and height
   const chartContainerStyle = {
-    flex: '1 1 300px', // flexible width but minimum 300px
-    minWidth: '300px',
+    flex: '1 1 200px', // flexible width but minimum 300px
+    minWidth: '200px',
     maxWidth: '5000px',
     height: '400px', // reduced height for mobile
     boxSizing: 'border-box',
@@ -259,9 +259,9 @@ function TemperaturePage() {
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
-    flex: '1 1 250px',
+    flex: '1 1 150px',
     minWidth: '250px',
-    maxWidth: '400px',
+    maxWidth: '200px',
     boxSizing: 'border-box',
     padding: '0 10px',
   };
