@@ -23,7 +23,7 @@ export default function Home() {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '80vh',
-      width: '50vw',
+      width: '100%',
       boxSizing: 'border-box'
     }}>
       <div style={{
