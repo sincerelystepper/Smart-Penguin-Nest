@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Import your pages (we'll create these next)
-import Home from './pages/home.jsx';
-import TemperaturePage from './pages/temperaturePage.jsx';
+import Home from './pages/Home.jsx';
+import TemperaturePage from './pages/TemperaturePage.jsx';
 import FoodMassPage from './pages/FoodMassPage.jsx';
 import BodySizePage from './pages/BodySizePage.jsx';
 // You can add more pages later
