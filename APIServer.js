@@ -122,6 +122,64 @@ app.get('/tempData', async (req, res) => { // Get request to fetch temperature d
   }
 });
 
+app.get('/bodySizeData', async (req, res) => { // Get request to fetch body size data
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Body Size");
+
+    const { start, end } = req.query;
+    let filter = {};
+
+    if (start && end) {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        filter.timestamp = {
+          $gte: startDate,
+          $lte: endDate
+        };
+      }
+    }
+
+    const data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error fetching body size data:", err.message);
+    res.status(500).send("Error fetching body size data");
+  }
+});
+
+app.get('/foodMassData', async (req, res) => { // Get request to fetch food mass data
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Food Mass");
+
+    const { start, end } = req.query;
+    let filter = {};
+
+    if (start && end) {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        filter.timestamp = {
+          $gte: startDate,
+          $lte: endDate
+        };
+      }
+    }
+
+    const data = await collection.find(filter).sort({ timestamp: 1 }).toArray();
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error fetching food mass data:", err.message);
+    res.status(500).send("Error fetching food mass data");
+  }
+});
+
 app.get('/downloadTempData', async (req, res) => { // Get request to download temperature data as CSV
   try {
     const client = await connectToDatabase();
