@@ -57,7 +57,8 @@ function FoodMassPage() {
           params.rangeType = 'year';
           res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
           rawData = res.data.map(d => ({
-            timestamp: new Date(params.year, d._id.month - 1).toISOString(),
+            // Label: Month name
+            label: new Date(params.year, d._id.month - 1).toLocaleString('default', { month: 'short' }),
             penguinID: d._id.penguinID,
             foodMass: d.avgFoodMass
           }));
@@ -67,7 +68,8 @@ function FoodMassPage() {
           params.rangeType = 'month';
           res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
           rawData = res.data.map(d => ({
-            timestamp: new Date(params.year, params.month - 1, d._id.day).toISOString(),
+            // Label: Day of month
+            label: `${d._id.day}`,
             penguinID: d._id.penguinID,
             foodMass: d.avgFoodMass
           }));
@@ -77,30 +79,37 @@ function FoodMassPage() {
             params.end = endDate.toISOString();
           }
           res = await axios.get(`${BASE_API}/foodMassData`, { params });
-          rawData = res.data;
+          rawData = res.data.map(d => ({
+            // Label: Time only
+            label: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            penguinID: d.penguinID,
+            foodMass: d.foodMass
+          }));
         }
 
-        // Group by timestamp and penguinID
-        const timestampSet = new Set();
+        // Group by label and penguinID
+        const labelSet = new Set();
         const penguinMap = {};
 
-        rawData.forEach(({ timestamp, penguinID, foodMass }) => {
-          const label = new Date(timestamp).toLocaleString([], {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-
-          timestampSet.add(label);
+        rawData.forEach(({ label, penguinID, foodMass }) => {
+          labelSet.add(label);
           if (!penguinMap[penguinID]) penguinMap[penguinID] = {};
           penguinMap[penguinID][label] = foodMass;
         });
 
-        const sortedLabels = Array.from(timestampSet).sort(
-          (a, b) => new Date(a) - new Date(b)
-        );
+        const sortedLabels = Array.from(labelSet).sort((a, b) => {
+          // Sort months, days, or times correctly
+          if (rangeType === 'year') {
+            // Sort by month index
+            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            return months.indexOf(a) - months.indexOf(b);
+          } else if (rangeType === 'month') {
+            return parseInt(a) - parseInt(b);
+          } else {
+            // Sort by time
+            return a.localeCompare(b);
+          }
+        });
 
         const datasets = Object.keys(penguinMap).map(pid => ({
           label: `Penguin ${pid}`,
@@ -109,7 +118,7 @@ function FoodMassPage() {
           backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
           tension: 0.3,
           fill: false,
-          pointRadius: isCustomLong ? 0 : 5, // <-- hide points if long custom range
+          pointRadius: isCustomLong ? 0 : 5,
           pointHoverRadius: isCustomLong ? 0 : 6,
         }));
 
@@ -190,8 +199,8 @@ function FoodMassPage() {
     },
     elements: {
       point: {
-        radius: isCustomLong ? 0 : 5,
-        hoverRadius: isCustomLong ? 0 : 6,
+        radius: isCustomLong ? 2 : 5,
+        hoverRadius: isCustomLong ? 2 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
         borderColor: 'rgba(0,0,0,0)',
         hitRadius: 0
