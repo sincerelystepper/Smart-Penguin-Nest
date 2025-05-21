@@ -212,7 +212,84 @@ app.get('/avgTemp', async (req, res) => { // Get request to fetch average temper
   }
 });
 
-async function getMonthlyAverage(collection, year) { // Function to get monthly average temperature
+app.get('/avgBodySize', async (req, res) => { // Get request to fetch average bodySize data
+  const { rangeType, year, month } = req.query;
+
+  if (!year || isNaN(year)) {
+    return res.status(400).json({ error: "Missing or invalid year parameter" });
+  }
+
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Body Size");
+
+    let data;
+
+    if (rangeType === 'year') {
+      data = await getMonthlyAverage(collection, parseInt(year));
+    } else if (rangeType === 'month') {
+      if (!month || isNaN(month)) {
+        return res.status(400).json({ error: "Missing or invalid month parameter" });
+      }
+      data = await getDailyAverage(collection, parseInt(year), parseInt(month));
+    } else {
+      return res.status(400).json({ error: 'Unsupported rangeType' });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Aggregation error:", err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/avgFoodMass', async (req, res) => { // Get request to fetch average foodMass data
+  const { rangeType, year, month } = req.query;
+
+  if (!year || isNaN(year)) {
+    return res.status(400).json({ error: "Missing or invalid year parameter" });
+  }
+
+  try {
+    const client = await connectToDatabase();
+    const db = client.db("Penguin_Data");
+    const collection = db.collection("Food Mass");
+
+    let data;
+
+    if (rangeType === 'year') {
+      data = await getMonthlyAverage(collection, parseInt(year));
+    } else if (rangeType === 'month') {
+      if (!month || isNaN(month)) {
+        return res.status(400).json({ error: "Missing or invalid month parameter" });
+      }
+      data = await getDailyAverage(collection, parseInt(year), parseInt(month));
+    } else {
+      return res.status(400).json({ error: 'Unsupported rangeType' });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Aggregation error:", err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+async function getMonthlyAverage(collection, year) {
+  // Determine the numeric field to average based on collection name
+  let name = collection.collectionName === "Body Size" ? "bodySize" :
+    collection.collectionName === "Temperature" ? "temperature" :
+    collection.collectionName === "Food Mass" ? "foodMass" : null;
+  if (!name) {
+    throw new Error("Invalid collection name");
+  }
+
+  // If the collection is Food Mass, group by both month and penguinID
+  const groupId = collection.collectionName === "Food Mass"
+    ? { month: { $month: "$timestamp" }, penguinID: "$penguinID" }
+    : { month: { $month: "$timestamp" } };
+
   return collection.aggregate([
     {
       $match: {
@@ -224,18 +301,40 @@ async function getMonthlyAverage(collection, year) { // Function to get monthly 
     },
     {
       $group: {
-        _id: { month: { $month: "$timestamp" } },
-        avgTemperature: { $avg: "$temperature" }
+        _id: groupId,
+        [`avg${name.charAt(0).toUpperCase() + name.slice(1)}`]: { $avg: `$${name}` }
       }
     },
-    { $sort: { "_id.month": 1 } }
+    { $sort: { "_id.month": 1, "_id.penguinID": 1 } }
   ]).toArray();
 }
 
-async function getDailyAverage(collection, year, month) { // Function to get daily average temperature
+async function getDailyAverage(collection, year, month) {
+  // Map collection name to field name
+  let name = collection.collectionName === "Body Size" ? "bodySize" :
+    collection.collectionName === "Temperature" ? "temperature" :
+    collection.collectionName === "Food Mass" ? "foodMass" : null;
+  if (!name) {
+    throw new Error("Invalid collection name");
+  }
+
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 1);
-  
+
+  // If Food Mass, group by day and penguinID
+  const groupId = collection.collectionName === "Food Mass"
+    ? {
+        year: { $year: "$timestamp" },
+        month: { $month: "$timestamp" },
+        day: { $dayOfMonth: "$timestamp" },
+        penguinID: "$penguinID"
+      }
+    : {
+        year: { $year: "$timestamp" },
+        month: { $month: "$timestamp" },
+        day: { $dayOfMonth: "$timestamp" }
+      };
+
   return collection.aggregate([
     {
       $match: {
@@ -247,15 +346,11 @@ async function getDailyAverage(collection, year, month) { // Function to get dai
     },
     {
       $group: {
-        _id: {
-          year: { $year: "$timestamp" },
-          month: { $month: "$timestamp" },
-          day: { $dayOfMonth: "$timestamp" }
-        },
-        avgTemperature: { $avg: "$temperature" }
+        _id: groupId,
+        [`avg${name.charAt(0).toUpperCase() + name.slice(1)}`]: { $avg: `$${name}` }
       }
     },
-    { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+    { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1, "_id.penguinID": 1 } }
   ]).toArray();
 }
 
