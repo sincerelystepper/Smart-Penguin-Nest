@@ -66,6 +66,19 @@ function BodySizePage() {
           const data = res.data;
           labels = data.map(d => `${d._id.day}`);
           sizes = data.map(d => d.avgBodySize);
+        } else if (rangeType === 'day') {
+          // Fetch all data for the selected day
+          const params = {
+            start: startDate.toISOString(),
+            end: endDate.toISOString()
+          };
+          res = await axios.get(`${BASE_API}/bodySizeData`, { params });
+          const data = res.data;
+          labels = data.map(d => {
+            const date = new Date(d.timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          });
+          sizes = data.map(d => d.bodySize);
         } else {
           const params = rangeType !== 'all' && startDate && endDate
             ? {
@@ -77,16 +90,14 @@ function BodySizePage() {
           const data = res.data;
           labels = data.map(d => {
             const date = new Date(d.timestamp);
-            return rangeType === "day"
-              ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : date.toLocaleString([], {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                });
+            return date.toLocaleString([], {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+              });
           });
           sizes = data.map(d => d.bodySize);
         }
