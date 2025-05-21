@@ -42,6 +42,7 @@ function TemperaturePage() {
   const [error, setError] = useState(null);
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [stats, setStats] = useState(null);
 
   const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
 

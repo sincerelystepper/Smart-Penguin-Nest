@@ -35,12 +35,13 @@ ChartJS.register(
 );
 
 function BodySizePage() {
-  const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
-  const [chartData, setChartData] = useState(null);
-  const [error, setError] = useState(null);
-  const [downloadType, setDownloadType] = useState('filtered');
-  const [showDropdown, setShowDropdown] = useState(false);
-
+  const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange(); // Importing context for date and range management
+  const [chartData, setChartData] = useState(null); // State to hold chart data
+  const [error, setError] = useState(null); // State to hold error messages
+  const [downloadType, setDownloadType] = useState('filtered'); // State to control download type
+  const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
+  const [stats, setStats] = useState(null); // State to hold statistics
+  
   // Helper: is custom range > 2 weeks?
   const isCustomLong =
     rangeType === "custom" &&
