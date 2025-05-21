@@ -40,6 +40,11 @@ function FoodMassPage() {
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Helper: is custom range > 2 weeks?
+  const isCustomLong =
+    rangeType === "custom" &&
+    (endDate - startDate) / (1000 * 60 * 60 * 24) > 14;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -104,8 +109,8 @@ function FoodMassPage() {
           backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
           tension: 0.3,
           fill: false,
-          pointRadius: rangeType === 'custom' ? 0 : 5,
-          pointHoverRadius: rangeType === 'custom' ? 0 : 6,
+          pointRadius: isCustomLong ? 0 : 5, // <-- hide points if long custom range
+          pointHoverRadius: isCustomLong ? 0 : 6,
         }));
 
         const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
@@ -169,7 +174,7 @@ function FoodMassPage() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: rangeType === 'custom' ? false : { duration: 1000 },
+    animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
       legend: { display: true },
       title: {
@@ -177,16 +182,16 @@ function FoodMassPage() {
         text: 'Penguin Food Mass Data',
         font: { size: 20 }
       },
-      tooltip: { enabled: rangeType !== 'custom' }
+      tooltip: { enabled: !isCustomLong }
     },
     interaction: {
-      mode: rangeType === 'custom' ? null : 'nearest',
+      mode: !isCustomLong ? 'nearest' : null,
       intersect: false
     },
     elements: {
       point: {
-        radius: rangeType === 'custom' ? 0 : 5,
-        hoverRadius: rangeType === 'custom' ? 0 : 6,
+        radius: isCustomLong ? 0 : 5,
+        hoverRadius: isCustomLong ? 0 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
         borderColor: 'rgba(0,0,0,0)',
         hitRadius: 0
