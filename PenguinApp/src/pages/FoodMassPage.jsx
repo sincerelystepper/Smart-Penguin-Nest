@@ -72,9 +72,23 @@ function FoodMassPage() {
             label: `${d._id.day}`,
             penguinID: d._id.penguinID,
             foodMass: d.avgFoodMass
-          }));
-        } else {
-          if (rangeType !== 'all' && startDate && endDate) {
+          }
+          ));
+        }
+          else if (rangeType === 'day') {
+            // Fetch all data for the selected day
+            params.start = startDate.toISOString();
+            params.end = endDate.toISOString();
+            res = await axios.get(`${BASE_API}/foodMassData`, { params });
+            rawData = res.data.map(d => ({
+              // Label: Time only
+              label: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              penguinID: d.penguinID,
+              foodMass: d.foodMass
+            }));
+          }
+          else {
+          if (rangeType = 'custom' && startDate && endDate) { 
             params.start = startDate.toISOString();
             params.end = endDate.toISOString();
           }
@@ -199,8 +213,8 @@ function FoodMassPage() {
     },
     elements: {
       point: {
-        radius: isCustomLong ? 2 : 5,
-        hoverRadius: isCustomLong ? 2 : 6,
+        radius: isCustomLong ? 5 : 5,
+        hoverRadius: isCustomLong ? 5 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
         borderColor: 'rgba(0,0,0,0)',
         hitRadius: 0
