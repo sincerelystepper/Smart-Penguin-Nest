@@ -120,11 +120,11 @@ function BodySizePage() {
                 fill: true,
                 pointRadius: isCustomLong ? 5 : 5,
                 pointHoverRadius: isCustomLong ? 5 : 6,
-                pointBackgroundColor: isCustomLong ? 'rgba(0,0,0,0)' : 'rgba(75, 192, 192, 1)',
-                pointBorderColor: 'rgba(0,0,0,0)',
+                pointBackgroundColor: 'rgba(75, 192, 192, 0.2)',
+                pointBorderColor: 'rgba(75, 192, 192, 1)',
                 pointHitRadius: 0,
-                pointHoverBackgroundColor: 'rgba(0,0,0,0)',
-                pointHoverBorderColor: 'rgba(0,0,0,0)',
+                pointHoverBackgroundColor: 'rgba(75, 192, 192, 0.2)',
+                pointHoverBorderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2
               }
             ]
@@ -208,7 +208,7 @@ function BodySizePage() {
         radius: isCustomLong ? 5 : 5,
         hoverRadius: isCustomLong ? 5 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
-        borderColor: 'rgba(0,0,0,0)',
+        borderColor: 'rgba(75, 192, 192, 1)',
         hitRadius: 0
       }
     },
