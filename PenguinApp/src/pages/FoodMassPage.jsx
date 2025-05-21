@@ -78,9 +78,13 @@ function FoodMassPage() {
         res = await axios.get(`${BASE_API}/foodMassData`, { params });
         rawData = res.data.map(d => {
           const timestamp = new Date(d.timestamp);
+          const isMultiDay = rangeType === 'custom' && endDate.getDate() !== startDate.getDate();
+          const label = isMultiDay
+            ? timestamp.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            : timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           return {
             timestamp,
-            label: timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            label,
             penguinID: d.penguinID,
             foodMass: d.foodMass
           };
