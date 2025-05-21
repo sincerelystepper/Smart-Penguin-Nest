@@ -52,9 +52,10 @@ app.post('/addFoodMass', async (req, res) => { // Post request to send food mass
     const collection = db.collection("Food Mass");
 
     const data = {
-      penguinID: parseFloat(req.body.penguinID),
-      foodMass: parseFloat(req.body.foodMass),
       timestamp: new Date(req.body.timestamp),
+      foodMass: parseFloat(req.body.foodMass),
+      penguinID: parseFloat(req.body.penguinID)
+      ,
     };
 
     if (!data.foodMass || isNaN(data.foodMass) || isNaN(data.timestamp.getTime())) {
@@ -146,7 +147,7 @@ app.get('/downloadTempData', async (req, res) => { // Get request to download te
   }
 });
 
-app.get('/downloadTempDataFiltered', async (req, res) => {
+app.get('/downloadTempDataFiltered', async (req, res) => { // Get request to download filtered temperature data as CSV
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data");
@@ -179,7 +180,7 @@ app.get('/downloadTempDataFiltered', async (req, res) => {
   }
 });
 
-app.get('/avgTemp', async (req, res) => {
+app.get('/avgTemp', async (req, res) => { // Get request to fetch average temperature data
   const { rangeType, year, month } = req.query;
 
   if (!year || isNaN(year)) {
@@ -211,7 +212,7 @@ app.get('/avgTemp', async (req, res) => {
   }
 });
 
-async function getMonthlyAverage(collection, year) {
+async function getMonthlyAverage(collection, year) { // Function to get monthly average temperature
   return collection.aggregate([
     {
       $match: {
@@ -231,7 +232,7 @@ async function getMonthlyAverage(collection, year) {
   ]).toArray();
 }
 
-async function getDailyAverage(collection, year, month) {
+async function getDailyAverage(collection, year, month) { // Function to get daily average temperature
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 1);
   
