@@ -4,7 +4,6 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../App.css';
-
 import EggMenu from '../components/eggMenu';
 
 import {
@@ -45,68 +44,62 @@ function FoodMassPage() {
     const fetchData = async () => {
       try {
         let res;
-        let labels = [];
-        let penguinData = {};
+        let rawData = [];
+        const params = {};
 
         if (rangeType === 'year') {
-          const year = startDate.getFullYear();
-          res = await axios.get(`${BASE_API}/avgFoodMass`, { params: { year, rangeType } });
-          const data = res.data;
-
-          // Group by penguinID
-          data.forEach(d => {
-            const monthLabel = new Date(year, d._id.month - 1).toLocaleString('default', { month: 'short' });
-            if (!labels.includes(monthLabel)) labels.push(monthLabel);
-            const pid = d._id.penguinID;
-            if (!penguinData[pid]) penguinData[pid] = [];
-            penguinData[pid].push(d.avgFoodMass);
-          });
+          params.year = startDate.getFullYear();
+          params.rangeType = 'year';
+          res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
+          rawData = res.data.map(d => ({
+            timestamp: new Date(params.year, d._id.month - 1).toISOString(),
+            penguinID: d._id.penguinID,
+            foodMass: d.avgFoodMass
+          }));
         } else if (rangeType === 'month') {
-          const year = startDate.getFullYear();
-          const month = startDate.getMonth() + 1;
-          res = await axios.get(`${BASE_API}/avgFoodMass`, { params: { year, month, rangeType } });
-          const data = res.data;
-
-          data.forEach(d => {
-            const dayLabel = `${d._id.day}`;
-            if (!labels.includes(dayLabel)) labels.push(dayLabel);
-            const pid = d._id.penguinID;
-            if (!penguinData[pid]) penguinData[pid] = [];
-            penguinData[pid].push(d.avgFoodMass);
-          });
+          params.year = startDate.getFullYear();
+          params.month = startDate.getMonth() + 1;
+          params.rangeType = 'month';
+          res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
+          rawData = res.data.map(d => ({
+            timestamp: new Date(params.year, params.month - 1, d._id.day).toISOString(),
+            penguinID: d._id.penguinID,
+            foodMass: d.avgFoodMass
+          }));
         } else {
-          const params = rangeType !== 'all' && startDate && endDate
-            ? {
-                start: startDate.toISOString(),
-                end: endDate.toISOString()
-              }
-            : {};
+          if (rangeType !== 'all' && startDate && endDate) {
+            params.start = startDate.toISOString();
+            params.end = endDate.toISOString();
+          }
           res = await axios.get(`${BASE_API}/foodMassData`, { params });
-          const data = res.data;
-
-          data.forEach(d => {
-            const date = new Date(d.timestamp);
-            const label = rangeType === "day"
-              ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : date.toLocaleString([], {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                });
-            if (!labels.includes(label)) labels.push(label);
-            const pid = d.penguinID;
-            if (!penguinData[pid]) penguinData[pid] = [];
-            penguinData[pid].push(d.foodMass);
-          });
+          rawData = res.data;
         }
 
-        // Prepare datasets for each penguinID
-        const datasets = Object.keys(penguinData).map(pid => ({
+        // Group by timestamp and penguinID
+        const timestampSet = new Set();
+        const penguinMap = {};
+
+        rawData.forEach(({ timestamp, penguinID, foodMass }) => {
+          const label = new Date(timestamp).toLocaleString([], {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+
+          timestampSet.add(label);
+          if (!penguinMap[penguinID]) penguinMap[penguinID] = {};
+          penguinMap[penguinID][label] = foodMass;
+        });
+
+        const sortedLabels = Array.from(timestampSet).sort(
+          (a, b) => new Date(a) - new Date(b)
+        );
+
+        const datasets = Object.keys(penguinMap).map(pid => ({
           label: `Penguin ${pid}`,
-          data: penguinData[pid],
+          data: sortedLabels.map(label => penguinMap[pid][label] ?? null),
           borderColor: `hsl(${(pid * 120) % 360}, 70%, 50%)`,
           backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
           tension: 0.3,
@@ -115,8 +108,7 @@ function FoodMassPage() {
           pointHoverRadius: rangeType === 'custom' ? 0 : 6,
         }));
 
-        // Calculate stats for all data combined
-        const allValues = Object.values(penguinData).flat();
+        const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
         if (allValues.length > 0) {
           const mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
           const sorted = [...allValues].sort((a, b) => a - b);
@@ -128,11 +120,12 @@ function FoodMassPage() {
           const stdDev = Math.sqrt(allValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / allValues.length);
 
           setStats({ mean, median, max, min, stdDev });
-          setChartData({ labels, datasets });
+          setChartData({ labels: sortedLabels, datasets });
         } else {
           setStats(null);
           setChartData(null);
         }
+
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data");
