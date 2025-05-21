@@ -44,6 +44,11 @@ function BodySizePage() {
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Helper: is custom range > 2 weeks?
+  const isCustomLong =
+    rangeType === "custom" &&
+    (endDate - startDate) / (1000 * 60 * 60 * 24) > 14;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,9 +118,9 @@ function BodySizePage() {
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 tension: 0.3,
                 fill: true,
-                pointRadius: rangeType === 'custom' ? 0 : 5,
-                pointHoverRadius: rangeType === 'custom' ? 0 : 6,
-                pointBackgroundColor: rangeType === 'custom' ? 'rgba(0,0,0,0)' : 'rgba(75, 192, 192, 1)',
+                pointRadius: isCustomLong ? 5 : 5,
+                pointHoverRadius: isCustomLong ? 5 : 6,
+                pointBackgroundColor: isCustomLong ? 'rgba(0,0,0,0)' : 'rgba(75, 192, 192, 1)',
                 pointBorderColor: 'rgba(0,0,0,0)',
                 pointHitRadius: 0,
                 pointHoverBackgroundColor: 'rgba(0,0,0,0)',
@@ -182,9 +187,7 @@ function BodySizePage() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: rangeType === 'custom' ? false : {
-      duration: 1000
-    },
+    animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
       legend: { display: true },
       title: {
@@ -193,17 +196,17 @@ function BodySizePage() {
         font: { size: 20 }
       },
       tooltip: {
-        enabled: rangeType !== 'custom'
+        enabled: !isCustomLong
       }
     },
     interaction: {
-      mode: rangeType === 'custom' ? null : 'nearest',
+      mode: !isCustomLong ? 'nearest' : null,
       intersect: false
     },
     elements: {
       point: {
-        radius: rangeType === 'custom' ? 0 : 5,
-        hoverRadius: rangeType === 'custom' ? 0 : 6,
+        radius: isCustomLong ? 5 : 5,
+        hoverRadius: isCustomLong ? 5 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
         borderColor: 'rgba(0,0,0,0)',
         hitRadius: 0
