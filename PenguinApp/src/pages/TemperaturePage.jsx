@@ -7,7 +7,7 @@ import '../App.css';
 
 import { Link } from 'react-router-dom';
 import EggMenu from '../components/eggMenu'; // Import the EggMenu component
-import { useRange } from '../context/RangeContext'; // adjust path as needed
+import { useRange } from '../RangeContext'; // Import the useRange hook
 
 // --- API URL Setup ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost

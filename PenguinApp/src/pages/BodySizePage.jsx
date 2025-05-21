@@ -7,8 +7,7 @@ import '../App.css';
 
 import { Link } from 'react-router-dom';
 import EggMenu from '../components/eggMenu';
-import { useRange } from '../context/RangeContext'; // adjust path as needed
-
+import { useRange } from '../RangeContext';
 // --- API URL Setup ---
 // Update these endpoints to your actual body size endpoints!
 const BASE_API = 'https://server-api-609n.onrender.com';

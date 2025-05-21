@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../App.css';
 import EggMenu from '../components/eggMenu';
-import { useRange } from '../context/RangeContext'; // adjust path as needed
+import { useRange } from '../RangeContext';
 
 import {
   Chart as ChartJS,
