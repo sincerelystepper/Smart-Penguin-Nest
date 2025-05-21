@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { RangeProvider } from './context/RangeContext';
+import { RangeProvider } from './RangeContext';
 
 // Import your pages (we'll create these next)
 import Home from './pages/Home.jsx';
