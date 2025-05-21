@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { RangeProvider } from './context/RangeContext';
 
 // Import your pages (we'll create these next)
 import Home from './pages/Home.jsx';
@@ -9,14 +10,16 @@ import BodySizePage from './pages/BodySizePage.jsx';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/temperature" element={<TemperaturePage />} />
-        <Route path="/foodMass" element={<FoodMassPage />} />
-        <Route path="/bodySize" element={<BodySizePage />} />
-      </Routes>
-    </Router>
+    <RangeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/temperature" element={<TemperaturePage />} />
+          <Route path="/foodMass" element={<FoodMassPage />} />
+          <Route path="/bodySize" element={<BodySizePage />} />
+        </Routes>
+      </Router>
+    </RangeProvider>
   );
 }
 

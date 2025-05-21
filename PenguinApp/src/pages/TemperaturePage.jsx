@@ -7,6 +7,7 @@ import '../App.css';
 
 import { Link } from 'react-router-dom';
 import EggMenu from '../components/eggMenu'; // Import the EggMenu component
+import { useRange } from '../context/RangeContext'; // adjust path as needed
 
 // --- API URL Setup ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
@@ -39,12 +40,10 @@ function TemperaturePage() {
   // --- State Variables ---
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
-  const [rangeType, setRangeType] = useState("year");
-  const [startDate, setStartDate] = useState(new Date("2025-01-01T00:00:00Z"));
-  const [endDate, setEndDate] = useState(new Date("2025-12-31T23:59:59Z"));
-  const [stats, setStats] = useState(null);
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
 
   // Helper: is custom range > 2 weeks?
   const isCustomLong =

@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../App.css';
 import EggMenu from '../components/eggMenu';
+import { useRange } from '../context/RangeContext'; // adjust path as needed
 
 import {
   Chart as ChartJS,
@@ -31,14 +32,12 @@ ChartJS.register(
 const BASE_API = 'https://server-api-609n.onrender.com';
 
 function FoodMassPage() {
+  const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
-  const [rangeType, setRangeType] = useState("year");
-  const [startDate, setStartDate] = useState(new Date("2025-01-01T00:00:00Z"));
-  const [endDate, setEndDate] = useState(new Date("2025-12-31T23:59:59Z"));
-  const [stats, setStats] = useState(null);
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [stats, setStats] = useState(null);
 
   // Helper: is custom range > 2 weeks?
   const isCustomLong =
