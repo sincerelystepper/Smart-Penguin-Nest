@@ -84,8 +84,6 @@ function FoodMassPage() {
           res = await axios.get(`${BASE_API}/foodMassData`, { params });
           const data = res.data;
 
-          // 1. Collect all unique labels and sort them
-          const labelSet = new Set();
           data.forEach(d => {
             const date = new Date(d.timestamp);
             const label = rangeType === "day"
@@ -98,32 +96,10 @@ function FoodMassPage() {
                   minute: '2-digit',
                   second: '2-digit'
                 });
-            labelSet.add(label);
-          });
-          const labels = Array.from(labelSet);
-          labels.sort((a, b) => new Date(a) - new Date(b)); // Sort labels chronologically
-
-          // 2. Build a mapping from label to index
-          const labelIndex = {};
-          labels.forEach((l, i) => { labelIndex[l] = i; });
-
-          // 3. For each penguinID, fill an array matching the labels
-          let penguinData = {};
-          data.forEach(d => {
-            const date = new Date(d.timestamp);
-            const label = rangeType === "day"
-              ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              : date.toLocaleString([], {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                });
+            if (!labels.includes(label)) labels.push(label);
             const pid = d.penguinID;
-            if (!penguinData[pid]) penguinData[pid] = Array(labels.length).fill(null);
-            penguinData[pid][labelIndex[label]] = d.foodMass;
+            if (!penguinData[pid]) penguinData[pid] = [];
+            penguinData[pid].push(d.foodMass);
           });
         }
 
