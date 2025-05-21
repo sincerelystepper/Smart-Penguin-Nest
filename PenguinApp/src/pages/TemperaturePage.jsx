@@ -39,15 +39,17 @@ function TemperaturePage() {
   // --- State Variables ---
   const [chartData, setChartData] = useState(null);
   const [error, setError] = useState(null);
-  const [rangeType, setRangeType] = useState("year"); // Default to year
-
+  const [rangeType, setRangeType] = useState("year");
   const [startDate, setStartDate] = useState(new Date("2025-01-01T00:00:00Z"));
   const [endDate, setEndDate] = useState(new Date("2025-12-31T23:59:59Z"));
-
   const [stats, setStats] = useState(null);
-
-  const [downloadType, setDownloadType] = useState('filtered'); // default to current chart
+  const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // Helper: is custom range > 2 weeks?
+  const isCustomLong =
+    rangeType === "custom" &&
+    (endDate - startDate) / (1000 * 60 * 60 * 24) > 14;
 
   // --- API URL (Override for Render) ---
   const BASE_API = 'https://server-api-609n.onrender.com'; // or your Render URL http://localhost:3000/tempData
@@ -186,9 +188,7 @@ function TemperaturePage() {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: rangeType === 'custom' ? false : {
-      duration: 1000
-    }, // disable animations for large custom ranges
+    animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
       legend: { display: true },
       title: {
@@ -196,18 +196,16 @@ function TemperaturePage() {
         text: 'Penguin Temperature Data',
         font: { size: 20 }
       },
-      tooltip: {
-        enabled: rangeType !== 'custom' // disable tooltips in custom mode
-      }
+      tooltip: { enabled: !isCustomLong }
     },
     interaction: {
-      mode: rangeType === 'custom' ? null : 'nearest',
+      mode: !isCustomLong ? 'nearest' : null,
       intersect: false
     },
     elements: {
       point: {
-        radius: rangeType === 'custom' ? 0 : 5,
-        hoverRadius: rangeType === 'custom' ? 0 : 6,
+        radius: isCustomLong ? 5 : 5,
+        hoverRadius: isCustomLong ? 5 : 6,
         backgroundColor: 'rgba(0,0,0,0)',
         borderColor: 'rgba(0,0,0,0)',
         hitRadius: 0
@@ -215,7 +213,8 @@ function TemperaturePage() {
     },
     scales: {
       y: {
-        beginAtZero: true
+        beginAtZero: true,
+        title: { display: true, text: 'Temperature (°C)' }
       }
     }
   };
