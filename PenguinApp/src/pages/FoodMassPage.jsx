@@ -46,122 +46,101 @@ function FoodMassPage() {
     (endDate - startDate) / (1000 * 60 * 60 * 24) > 14;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let res;
-        let rawData = [];
-        const params = {};
+  const fetchData = async () => {
+    try {
+      let res;
+      let rawData = [];
+      const params = {};
 
-        if (rangeType === 'year') {
-          params.year = startDate.getFullYear();
-          params.rangeType = 'year';
-          res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
-          rawData = res.data.map(d => ({
-            // Label: Month name
-            label: new Date(params.year, d._id.month - 1).toLocaleString('default', { month: 'short' }),
-            penguinID: d._id.penguinID,
-            foodMass: d.avgFoodMass
-          }));
-        } else if (rangeType === 'month') {
-          params.year = startDate.getFullYear();
-          params.month = startDate.getMonth() + 1;
-          params.rangeType = 'month';
-          res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
-          rawData = res.data.map(d => ({
-            // Label: Day of month
-            label: `${d._id.day}`,
-            penguinID: d._id.penguinID,
-            foodMass: d.avgFoodMass
-          }
-          ));
-        }
-          else if (rangeType === 'day') {
-            // Fetch all data for the selected day
-            params.start = startDate.toISOString();
-            params.end = endDate.toISOString();
-            res = await axios.get(`${BASE_API}/foodMassData`, { params });
-            rawData = res.data.map(d => ({
-              // Label: Time only
-              label: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              penguinID: d.penguinID,
-              foodMass: d.foodMass
-            }));
-          }
-          else {
-          if (rangeType = 'custom' && startDate && endDate) { 
-            params.start = startDate.toISOString();
-            params.end = endDate.toISOString();
-          }
-          res = await axios.get(`${BASE_API}/foodMassData`, { params });
-          rawData = res.data.map(d => ({
-            // Label: Time only
-            label: new Date(d.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      if (rangeType === 'year') {
+        params.year = startDate.getFullYear();
+        params.rangeType = 'year';
+        res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
+        rawData = res.data.map(d => ({
+          label: new Date(params.year, d._id.month - 1).toLocaleString('default', { month: 'short' }),
+          penguinID: d._id.penguinID,
+          foodMass: d.avgFoodMass
+        }));
+      } else if (rangeType === 'month') {
+        params.year = startDate.getFullYear();
+        params.month = startDate.getMonth() + 1;
+        params.rangeType = 'month';
+        res = await axios.get(`${BASE_API}/avgFoodMass`, { params });
+        rawData = res.data.map(d => ({
+          label: `${d._id.day}`,
+          penguinID: d._id.penguinID,
+          foodMass: d.avgFoodMass
+        }));
+      } else {
+        // Handles both 'day' and 'custom'
+        params.start = startDate.toISOString();
+        params.end = endDate.toISOString();
+        res = await axios.get(`${BASE_API}/foodMassData`, { params });
+        rawData = res.data.map(d => {
+          const timestamp = new Date(d.timestamp);
+          return {
+            timestamp,
+            label: timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             penguinID: d.penguinID,
             foodMass: d.foodMass
-          }));
-        }
-
-        // Group by label and penguinID
-        const labelSet = new Set();
-        const penguinMap = {};
-
-        rawData.forEach(({ label, penguinID, foodMass }) => {
-          labelSet.add(label);
-          if (!penguinMap[penguinID]) penguinMap[penguinID] = {};
-          penguinMap[penguinID][label] = foodMass;
+          };
         });
-
-        const sortedLabels = Array.from(labelSet).sort((a, b) => {
-          // Sort months, days, or times correctly
-          if (rangeType === 'year') {
-            // Sort by month index
-            const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-            return months.indexOf(a) - months.indexOf(b);
-          } else if (rangeType === 'month') {
-            return parseInt(a) - parseInt(b);
-          } else {
-            // Sort by time
-            return a.localeCompare(b);
-          }
-        });
-
-        const datasets = Object.keys(penguinMap).map(pid => ({
-          label: `Penguin ${pid}`,
-          data: sortedLabels.map(label => penguinMap[pid][label] ?? null),
-          borderColor: `hsl(${(pid * 120) % 360}, 70%, 50%)`,
-          backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
-          tension: 0.3,
-          fill: false,
-          pointRadius: isCustomLong ? 0 : 5,
-          pointHoverRadius: isCustomLong ? 0 : 6,
-        }));
-
-        const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
-        if (allValues.length > 0) {
-          const mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
-          const sorted = [...allValues].sort((a, b) => a - b);
-          const median = sorted.length % 2 === 0
-            ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-            : sorted[Math.floor(sorted.length / 2)];
-          const max = Math.max(...allValues);
-          const min = Math.min(...allValues);
-          const stdDev = Math.sqrt(allValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / allValues.length);
-
-          setStats({ mean, median, max, min, stdDev });
-          setChartData({ labels: sortedLabels, datasets });
-        } else {
-          setStats(null);
-          setChartData(null);
-        }
-
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load data");
       }
-    };
 
-    fetchData();
-  }, [startDate, endDate, rangeType]);
+      // Group by label and penguinID
+      const labelMap = new Map();
+      const penguinMap = {};
+
+      rawData.forEach(d => {
+        const key = d.label;
+        const sortKey = d.timestamp?.getTime() ?? key;
+        labelMap.set(key, sortKey);
+        if (!penguinMap[d.penguinID]) penguinMap[d.penguinID] = {};
+        penguinMap[d.penguinID][key] = d.foodMass;
+      });
+
+      // Sort labels using the timestamp
+      const sortedLabels = Array.from(labelMap.entries())
+        .sort((a, b) => a[1] - b[1])
+        .map(([label]) => label);
+
+      const datasets = Object.keys(penguinMap).map(pid => ({
+        label: `Penguin ${pid}`,
+        data: sortedLabels.map(label => penguinMap[pid][label] ?? null),
+        borderColor: `hsl(${(pid * 120) % 360}, 70%, 50%)`,
+        backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
+        tension: 0.3,
+        fill: false,
+        pointRadius: isCustomLong ? 0 : 5,
+        pointHoverRadius: isCustomLong ? 0 : 6,
+      }));
+
+      const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
+      if (allValues.length > 0) {
+        const mean = allValues.reduce((a, b) => a + b, 0) / allValues.length;
+        const sorted = [...allValues].sort((a, b) => a - b);
+        const median = sorted.length % 2 === 0
+          ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+          : sorted[Math.floor(sorted.length / 2)];
+        const max = Math.max(...allValues);
+        const min = Math.min(...allValues);
+        const stdDev = Math.sqrt(allValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / allValues.length);
+
+        setStats({ mean, median, max, min, stdDev });
+        setChartData({ labels: sortedLabels, datasets });
+      } else {
+        setStats(null);
+        setChartData(null);
+      }
+
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to load data");
+    }
+  };
+
+  fetchData();
+}, [startDate, endDate, rangeType]);
 
   // --- CSV Download Handler ---
   const handleDownloadCSV = async () => {
