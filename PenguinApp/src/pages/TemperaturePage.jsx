@@ -187,6 +187,9 @@ function TemperaturePage() {
     }
   };
 
+  // Helper to detect dark mode
+  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -218,7 +221,8 @@ function TemperaturePage() {
         beginAtZero: true,
         title: { display: true, text: 'Temperature (°C)' }
       }
-    }
+    },
+    backgroundColor: isDarkMode ? '#242424' : '#fff', // <-- Add this line
   };
 
   // --- Responsive Styles ---
