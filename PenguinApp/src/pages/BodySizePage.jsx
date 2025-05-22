@@ -190,7 +190,7 @@ function BodySizePage() {
       legend: { display: true },
       title: {
         display: true,
-        text: 'Penguin Body Size Data',
+        text: 'Penguin Body Size Estimation Data',
         font: { size: 20 }
       },
       tooltip: {
@@ -292,10 +292,9 @@ function BodySizePage() {
   };
 
   const dropdownMenuStyle = {
-    display: 'flex',
-    flexDirection: 'column',
+    position: 'absolute',
     top: '100%',
-    right: 0,
+    left: 0,
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
@@ -309,12 +308,13 @@ function BodySizePage() {
   // --- Render UI ---
   return (
     <div style={containerStyle}>
+
+      <h1>Body Size Estimation</h1>
+      
       <div className="egg-menu-wrapper">
         <EggMenu />
       </div>
 
-      <h1>Temperature</h1>
-      
       <div className="range-selector-container">
         <div
           style={{
@@ -390,54 +390,70 @@ function BodySizePage() {
               const startOfYear = new Date(date.getFullYear(), 0, 1);
               const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
               setStartDate(startOfYear);
-              setEndDate(endOfYear);
-            }}
-            dateFormat="yyyy"
-            showYearPicker
-            className="custom-datepicker"
-            popperProps={{ strategy: 'fixed' }}
-            style={{ caretColor: 'transparent' }}
-          />
-        </div>
-      )}
-
-      {rangeType === "custom" && (
-        <div style={customDatePickerContainerStyle}>
-          <div>
-            <label style={{ display: 'block', fontWeight: 'bold' }}>Start Date:</label>
-            <DatePicker
-              selected={startDate}
-              onChange={date => setStartDate(date)}
-              showTimeSelect
-              dateFormat="yyyy-MM-dd HH:mm"
+                setEndDate(endOfYear);
+              }}
+              dateFormat="yyyy"
+              showYearPicker
               className="custom-datepicker"
               popperProps={{ strategy: 'fixed' }}
               style={{ caretColor: 'transparent' }}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', fontWeight: 'bold' }}>End Date:</label>
-            <DatePicker
-              selected={endDate}
-              onChange={date => setEndDate(date)}
-              showTimeSelect
-              dateFormat="yyyy-MM-dd HH:mm"
-              className="custom-datepicker"
-              popperProps={{ strategy: 'fixed' }}
-              style={{ caretColor: 'transparent' }}
-            />
-          </div>
-        </div>
-      )}
+              />
+            </div>
+            )}
 
-      {/* --- Chart and Stats Container --- */}
-      <div style={chartStatsContainerStyle}>
-        {/* Chart */}
-        <div style={chartContainerStyle}>
+            {rangeType === "custom" && (
+            <div style={customDatePickerContainerStyle}>
+              <div>
+              <label style={{ display: 'block', fontWeight: 'bold' }}>Start Date:</label>
+              <DatePicker
+                selected={startDate}
+                onChange={date => setStartDate(date)}
+                showTimeSelect
+                dateFormat="yyyy-MM-dd HH:mm"
+                className="custom-datepicker"
+                popperProps={{ strategy: 'fixed' }}
+                style={{ caretColor: 'transparent' }}
+              />
+              </div>
+              <div>
+              <label style={{ display: 'block', fontWeight: 'bold' }}>End Date:</label>
+              <DatePicker
+                selected={endDate}
+                onChange={date => setEndDate(date)}
+                showTimeSelect
+                dateFormat="yyyy-MM-dd HH:mm"
+                className="custom-datepicker"
+                popperProps={{ strategy: 'fixed' }}
+                style={{ caretColor: 'transparent' }}
+              />
+              </div>
+            </div>
+            )}
+
+            {/* --- Chart and Stats Container --- */}
+            <div style={chartStatsContainerStyle}>
+            {/* Chart */}
+                    <div style={chartContainerStyle}>
           {chartData ? (
-            <Line data={chartData} options={chartOptions} />
+            <Line
+              data={chartData}
+              options={chartOptions}
+              ref={chartRef => { window._chartRef = chartRef; }}
+            />
           ) : (
-            <p>No data available</p>
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.2rem',
+                color: '#888',
+                minHeight: '200px'
+              }}
+            >
+              No data available
+            </div>
           )}
         </div>
 
@@ -515,6 +531,37 @@ function BodySizePage() {
               </button>
             </div>
           )}
+          {/* Download Chart Image Button */}
+          <button
+            style={{
+              borderRadius: '0 5px 5px 0',
+              border: '1px solid #0077cc',
+              background: '#00aaff',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              padding: '8px 15px',
+            }}
+            onClick={() => {
+              // Download chart image logic
+              const chartInstance = window._chartRef && window._chartRef.chartInstance
+                ? window._chartRef.chartInstance
+                : window._chartRef && window._chartRef instanceof Object && window._chartRef;
+              if (chartInstance && chartInstance.toBase64Image) {
+                const url = chartInstance.toBase64Image();
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'body_size_chart.png';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+              } else {
+                alert('Chart image download not supported.');
+              }
+            }}
+          >
+            Download Chart Image
+          </button>
         </div>
       </div>
     </div>

@@ -295,10 +295,9 @@ function TemperaturePage() {
 
   // Style adjustments for dropdown menu to be full width on small screens
   const dropdownMenuStyle = {
-    display: 'flex',
-    flexDirection: 'column',
+    position: 'absolute',
     top: '100%',
-    right: 0,
+    left: 0, // Aligns dropdown with the left edge of the button group
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
@@ -309,44 +308,47 @@ function TemperaturePage() {
     overflow: 'hidden',
   };
 
+
   // --- Render UI ---
   return (
     <div style={containerStyle}>
-      <div className="egg-menu-wrapper">
-  <EggMenu />
-</div>
-<h1>Temperature</h1>
-<div className="range-selector-container">
-  <div
-    style={{
-      padding: '0px 12px',
-      border: '1px solid #0077cc',
-      borderRight: 'none',
-      borderRadius: '5px 0 0 5px',
-      background: '#00aaff',
-      color: 'white',
-      fontWeight: 'bold',
-      display: 'flex',
-      alignItems: 'center',
-      minWidth: '110px',
-      justifyContent: 'center',
-      flexShrink: 0,
-    }}
-  >
-    Select Range:
-  </div>
-  <select
-    value={rangeType}
-    onChange={(e) => setRangeType(e.target.value)}
-    className="range-select"
-  >
-    <option value="day">Day</option>
-    <option value="month">Month</option>
-    <option value="year">Year</option>
-    <option value="custom">Custom Range</option>
-  </select>
-</div>
 
+      <h1>Body Temperature</h1>
+
+      <div className="egg-menu-wrapper">
+        <EggMenu />
+      </div>
+
+      <div className="range-selector-container">
+        <div
+          style={{
+            padding: '0px 12px',
+            border: '1px solid #0077cc',
+            borderRight: 'none',
+            borderRadius: '5px 0 0 5px',
+            background: '#00aaff',
+            color: 'white',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            minWidth: '110px',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          Select Range:
+        </div>
+        <select
+          value={rangeType}
+          onChange={(e) => setRangeType(e.target.value)}
+          className="range-select"
+        >
+          <option value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
 
       {/* --- Date Pickers for Each Range Type --- */}
       {rangeType === "day" && (
@@ -388,138 +390,185 @@ function TemperaturePage() {
         <div style={{ marginBottom: '20px', display: 'inline-block' }}>
           <DatePicker
             selected={startDate}
-onChange={date => {
-const startOfYear = new Date(date.getFullYear(), 0, 1);
-const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
-setStartDate(startOfYear);
-setEndDate(endOfYear);
-}}
-dateFormat="yyyy"
-showYearPicker
-className="custom-datepicker"
-popperProps={{ strategy: 'fixed' }}
-style={{ caretColor: 'transparent' }}
-/>
-</div>
-)}
-  {rangeType === "custom" && (
-    <div style={customDatePickerContainerStyle}>
-      <div>
-        <label style={{ display: 'block', fontWeight: 'bold' }}>Start Date:</label>
-        <DatePicker
-          selected={startDate}
-          onChange={date => setStartDate(date)}
-          showTimeSelect
-          dateFormat="yyyy-MM-dd HH:mm"
-          className="custom-datepicker"
-          popperProps={{ strategy: 'fixed' }}
-          style={{ caretColor: 'transparent' }}
-        />
-      </div>
-      <div>
-        <label style={{ display: 'block', fontWeight: 'bold' }}>End Date:</label>
-        <DatePicker
-          selected={endDate}
-          onChange={date => setEndDate(date)}
-          showTimeSelect
-          dateFormat="yyyy-MM-dd HH:mm"
-          className="custom-datepicker"
-          popperProps={{ strategy: 'fixed' }}
-          style={{ caretColor: 'transparent' }}
-        />
-      </div>
-    </div>
-  )}
-
-  {/* --- Chart and Stats Container --- */}
-  <div style={chartStatsContainerStyle}>
-    {/* Chart */}
-    <div style={chartContainerStyle}>
-      {chartData ? (
-        <Line data={chartData} options={chartOptions} />
-      ) : (
-        <p>No data available</p>
-      )}
-    </div>
-
-    {/* Stats */}
-    <div style={statsContainerStyle}>
-      {stats && (
-        <>
-          <h3>Statistics</h3>
-          <p><strong>Mean:</strong> {stats.mean.toFixed(2)} °C</p>
-          <p><strong>Median:</strong> {stats.median.toFixed(2)} °C</p>
-          <p><strong>Max:</strong> {stats.max.toFixed(2)} °C</p>
-          <p><strong>Min:</strong> {stats.min.toFixed(2)} °C</p>
-          <p><strong>Std Dev:</strong> {stats.stdDev.toFixed(2)}</p>
-        </>
-      )}
-    </div>
-  </div>
-
-  {/* --- Download Buttons --- */}
-  <div style={{ marginTop: '20px' }}>
-    <div style={downloadButtonGroupStyle}>
-      <button
-        style={{
-          borderRadius: '5px 0 0 5px',
-          border: '1px solid #0077cc',
-          background: '#00aaff',
-          color: 'white',
-          fontWeight: 'bold',
-          cursor: 'pointer',
-          padding: '8px 15px',
-        }}
-        onClick={() => setShowDropdown(!showDropdown)}
-      >
-        Download CSV ▼
-      </button>
-      {showDropdown && (
-        <div style={dropdownMenuStyle}>
-          <button
-            style={{
-              display: 'block',
-              width: '100%',
-              padding: '8px 15px',
-              border: 'none',
-              background: 'transparent',
-              color: 'white',
-              cursor: 'pointer',
-              textAlign: 'left',
+            onChange={date => {
+              const startOfYear = new Date(date.getFullYear(), 0, 1);
+              const endOfYear = new Date(date.getFullYear(), 11, 31, 23, 59, 59, 999);
+              setStartDate(startOfYear);
+              setEndDate(endOfYear);
             }}
-            onClick={() => {
-              setDownloadType('filtered');
-              setShowDropdown(false);
-              handleDownloadCSV();
-            }}
-          >
-            Download Current Chart Data
-          </button>
-          <button
-            style={{
-              display: 'block',
-              width: '100%',
-              padding: '8px 15px',
-              border: 'none',
-              background: 'transparent',
-              color: 'white',
-              cursor: 'pointer',
-              textAlign: 'left',
-            }}
-            onClick={() => {
-              setDownloadType('all');
-              setShowDropdown(false);
-              handleDownloadCSV();
-            }}
-          >
-            Download All Data
-          </button>
+            dateFormat="yyyy"
+            showYearPicker
+            className="custom-datepicker"
+            popperProps={{ strategy: 'fixed' }}
+            style={{ caretColor: 'transparent' }}
+          />
         </div>
       )}
+      {rangeType === "custom" && (
+        <div style={customDatePickerContainerStyle}>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold' }}>Start Date:</label>
+            <DatePicker
+              selected={startDate}
+              onChange={date => setStartDate(date)}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm"
+              className="custom-datepicker"
+              popperProps={{ strategy: 'fixed' }}
+              style={{ caretColor: 'transparent' }}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 'bold' }}>End Date:</label>
+            <DatePicker
+              selected={endDate}
+              onChange={date => setEndDate(date)}
+              showTimeSelect
+              dateFormat="yyyy-MM-dd HH:mm"
+              className="custom-datepicker"
+              popperProps={{ strategy: 'fixed' }}
+              style={{ caretColor: 'transparent' }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* --- Chart and Stats Container --- */}
+      <div style={chartStatsContainerStyle}>
+        {/* Chart */}
+        <div style={chartContainerStyle}>
+          {chartData ? (
+            <Line
+              data={chartData}
+              options={chartOptions}
+              ref={chartRef => { window._chartRef = chartRef; }}
+            />
+          ) : (
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.2rem',
+                color: '#888',
+                minHeight: '200px'
+              }}
+            >
+              No data available
+            </div>
+          )}
+        </div>
+
+        {/* Stats */}
+        <div style={statsContainerStyle}>
+          {stats && (
+            <>
+              <h3>Statistics</h3>
+              <p><strong>Mean:</strong> {stats.mean.toFixed(2)} °C</p>
+              <p><strong>Median:</strong> {stats.median.toFixed(2)} °C</p>
+              <p><strong>Max:</strong> {stats.max.toFixed(2)} °C</p>
+              <p><strong>Min:</strong> {stats.min.toFixed(2)} °C</p>
+              <p><strong>Std Dev:</strong> {stats.stdDev.toFixed(2)}</p>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* --- Download Buttons --- */}
+      <div style={{ marginTop: '20px' }}>
+        <div style={downloadButtonGroupStyle}>
+          <button
+            style={{
+              borderRadius: '5px 0 0 5px',
+              border: '1px solid #0077cc',
+              background: '#00aaff',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              padding: '8px 15px',
+            }}
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            Download CSV ▼
+          </button>
+          {showDropdown && (
+            <div style={dropdownMenuStyle}>
+              <button
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '8px 15px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: 'white',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+                onClick={() => {
+                  setDownloadType('filtered');
+                  setShowDropdown(false);
+                  handleDownloadCSV();
+                }}
+              >
+                Download Current Chart Data
+              </button>
+              <button
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '8px 15px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: 'white',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+                onClick={() => {
+                  setDownloadType('all');
+                  setShowDropdown(false);
+                  handleDownloadCSV();
+                }}
+              >
+                Download All Data
+              </button>
+            </div>
+          )}
+          {/* Download Chart Image Button */}
+          <button
+            style={{
+              borderRadius: '0 5px 5px 0',
+              border: '1px solid #0077cc',
+              background: '#00aaff',
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              padding: '8px 15px',
+            }}
+            onClick={() => {
+              // Download chart image logic
+              const chartInstance = window._chartRef && window._chartRef.chartInstance
+                ? window._chartRef.chartInstance
+                : window._chartRef && window._chartRef instanceof Object && window._chartRef;
+              if (chartInstance && chartInstance.toBase64Image) {
+                const url = chartInstance.toBase64Image();
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'temperature_chart.png';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+              } else {
+                alert('Chart image download not supported.');
+              }
+            }}
+          >
+            Download Chart Image
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-);
+  );
 }
 
 export default TemperaturePage;
