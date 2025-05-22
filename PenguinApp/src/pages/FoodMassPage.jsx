@@ -323,7 +323,17 @@ function FoodMassPage() {
         </div>
         <select
           value={rangeType}
-          onChange={(e) => setRangeType(e.target.value)}
+          onChange={e => {
+            const value = e.target.value;
+            setRangeType(value);
+            if (value === "day") {
+              // Set startDate and endDate to today by default
+              const today = new Date();
+              setStartDate(today);
+              setEndDate(new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1));
+            }
+            // Optionally, handle other range types similarly if needed
+          }}
           className="range-select"
         >
           <option value="day">Day</option>
