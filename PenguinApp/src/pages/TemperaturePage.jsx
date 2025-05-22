@@ -296,7 +296,7 @@ function TemperaturePage() {
     position: 'relative',
     display: 'inline-flex',
     flexWrap: 'wrap',
-    gap: '90px',
+    gap: '76px',
   };
 
   // Style adjustments for dropdown menu to be full width on small screens
@@ -307,7 +307,7 @@ function TemperaturePage() {
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
-    minWidth: '150px',
+    minWidth: '247px',
     color: 'white',
     borderRadius: '0 0 5px 5px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -511,7 +511,7 @@ function TemperaturePage() {
               }}
               onClick={() => setShowDropdown(!showDropdown)}
             >
-              Download CSV ▼
+              Download Raw Data (CSV) ▼
             </button>
             {showDropdown && (
               <div style={dropdownMenuStyle}>
@@ -532,7 +532,7 @@ function TemperaturePage() {
                     handleDownloadCSV();
                   }}
                 >
-                  Download Current Chart Data
+                  Currently Selected Range
                 </button>
                 <button
                   style={{
@@ -551,7 +551,7 @@ function TemperaturePage() {
                     handleDownloadCSV();
                   }}
                 >
-                  Download All Data
+                  All Data
                 </button>
               </div>
             )}
@@ -605,7 +605,7 @@ function TemperaturePage() {
                     }
                   }}
                 >
-                  Download Chart Only
+                  Chart Only
                 </button>
                 <button
                   style={{
@@ -635,7 +635,7 @@ function TemperaturePage() {
                     }
                   }}
                 >
-                  Download Chart + Stats
+                  Chart + Statistics
                 </button>
               </div>
             )}
