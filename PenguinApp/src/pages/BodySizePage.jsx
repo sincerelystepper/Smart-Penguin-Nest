@@ -205,7 +205,7 @@ function BodySizePage() {
       point: {
         radius: isCustomLong ? 5 : 5,
         hoverRadius: isCustomLong ? 5 : 6,
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor: 'rgba(75, 192, 192, 1)',
         borderColor: 'rgba(75, 192, 192, 1)',
         hitRadius: 0
       }

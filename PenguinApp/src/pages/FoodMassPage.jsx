@@ -114,8 +114,8 @@ function FoodMassPage() {
         backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
         tension: 0.3,
         fill: false,
-        pointRadius: isCustomLong ? 5 : 5,
-        pointHoverRadius: isCustomLong ? 5 : 6,
+        pointRadius: isCustomLong ? 1 : 1,
+        pointHoverRadius: isCustomLong ? 1 : 1.2,
       }));
 
       const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
@@ -197,7 +197,7 @@ function FoodMassPage() {
       point: {
         radius: isCustomLong ? 5 : 5,
         hoverRadius: isCustomLong ? 5 : 6,
-        backgroundColor: 'rgba(0,0,0,0)',
+        backgroundColor: 'rgba(75, 192, 192, 1)',
         borderColor: 'rgba(75, 192, 192, 1)',
         hitRadius: 0
       }

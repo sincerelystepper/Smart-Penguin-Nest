@@ -119,8 +119,8 @@ function TemperaturePage() {
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 tension: 0.3,
                 fill: true,
-                pointRadius: rangeType === 'custom' ? 0 : 5,
-                pointHoverRadius: rangeType === 'custom' ? 0 : 6,
+                pointRadius: rangeType === 'custom' ? 3 : 3,
+                pointHoverRadius: rangeType === 'custom' ? 3 : 3.4,
                 pointBackgroundColor: 'rgba(75, 192, 192, 0.2)',
                 pointBorderColor: 'rgba(75, 192, 192, 1)',
                 pointHitRadius: 0,
@@ -206,7 +206,7 @@ function TemperaturePage() {
       point: {
         radius: isCustomLong ? 5 : 5,
         hoverRadius: isCustomLong ? 5 : 6,
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: 'rgba(75, 192, 192, 1)',
         borderColor: 'rgba(75, 192, 192, 1)',
         hitRadius: 0
       }
