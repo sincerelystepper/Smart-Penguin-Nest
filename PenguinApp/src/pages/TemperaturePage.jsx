@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +8,7 @@ import '../App.css';
 import { Link } from 'react-router-dom';
 import EggMenu from '../components/eggMenu'; // Import the EggMenu component
 import { useRange } from '../RangeContext'; // Import the useRange hook
+import html2canvas from 'html2canvas';
 
 // --- API URL Setup ---
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/tempData'; // Use environment variable or default to localhost
@@ -42,6 +43,7 @@ function TemperaturePage() {
   const [error, setError] = useState(null);
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
 
   const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
@@ -309,6 +311,8 @@ function TemperaturePage() {
     overflow: 'hidden',
   };
 
+  const chartStatsRef = useRef(null);
+  const chartOnlyRef = useRef(null);
 
   // --- Render UI ---
   return (
@@ -441,9 +445,8 @@ function TemperaturePage() {
       )}
 
       {/* --- Chart and Stats Container --- */}
-      <div style={chartStatsContainerStyle}>
-        {/* Chart */}
-        <div style={chartContainerStyle}>
+      <div style={chartStatsContainerStyle} ref={chartStatsRef}>
+        <div style={chartContainerStyle} ref={chartOnlyRef}>
           {chartData ? (
             <Line
               data={chartData}
@@ -466,8 +469,6 @@ function TemperaturePage() {
             </div>
           )}
         </div>
-
-        {/* Stats */}
         <div style={statsContainerStyle}>
           {stats && (
             <>
@@ -542,36 +543,100 @@ function TemperaturePage() {
             </div>
           )}
           {/* Download Chart Image Button */}
-          <button
-            style={{
-              borderRadius: '0 5px 5px 0',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => {
-              // Download chart image logic
-              const chartInstance = window._chartRef && window._chartRef.chartInstance
-                ? window._chartRef.chartInstance
-                : window._chartRef && window._chartRef instanceof Object && window._chartRef;
-              if (chartInstance && chartInstance.toBase64Image) {
-                const url = chartInstance.toBase64Image();
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'temperature_chart.png';
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-              } else {
-                alert('Chart image download not supported.');
-              }
-            }}
-          >
-            Download Chart Image
-          </button>
+          <div style={{ position: 'relative' }}>
+            <button
+              style={{
+                borderRadius: '0 5px 5px 0',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowImageDropdown(!showImageDropdown)}
+            >
+              Download Chart Image ▼
+            </button>
+            {showImageDropdown && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                background: '#00aaff',
+                border: '1px solid #0077cc',
+                zIndex: 1000,
+                minWidth: '180px',
+                color: 'white',
+                borderRadius: '0 0 5px 5px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                overflow: 'hidden',
+              }}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart only
+                    const chartInstance = window._chartRef && window._chartRef.chartInstance
+                      ? window._chartRef.chartInstance
+                      : window._chartRef && window._chartRef instanceof Object && window._chartRef;
+                    if (chartInstance && chartInstance.toBase64Image) {
+                      const url = chartInstance.toBase64Image();
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'temperature_chart.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart image download not supported.');
+                    }
+                  }}
+                >
+                  Download Chart Only
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart + stats using html2canvas
+                    if (chartStatsRef.current) {
+                      const canvas = await html2canvas(chartStatsRef.current);
+                      const url = canvas.toDataURL('image/png');
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'temperature_chart_and_stats.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart+Stats image download not supported.');
+                    }
+                  }}
+                >
+                  Download Chart + Stats
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
