@@ -245,12 +245,11 @@ function TemperaturePage() {
 
   // Chart container with responsive width and height
   const chartContainerStyle = {
-    flex: '1 1 200px', // flexible width but minimum 300px
+    flex: '1 1 200px',
     minWidth: '200px',
     maxWidth: '5000px',
-    minHeight: '400px',
-    maxHeight: '2500px',
-    height: '100%',
+    aspectRatio: '2 / 1', // width:height = 2:1, so height is half the width
+    width: '100%',
     boxSizing: 'border-box',
   };
 
