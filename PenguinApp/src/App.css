@@ -22,15 +22,15 @@
 
 @media (prefers-color-scheme: light) {
   body {
-    background: linear-gradient(180deg, #fff 0%, #808080 100%);
-    color: white;
+    background: white;
+    color: black;
   }
 
   h1 {
     color: Black;
   }
   h3 {
-    color: white;
+    color: black;
   }
 }
 

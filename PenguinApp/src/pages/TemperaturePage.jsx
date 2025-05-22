@@ -45,6 +45,7 @@ function TemperaturePage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
+  const [darkMode, setDarkMode] = useState(false); // Dark mode state
 
   const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
 
@@ -187,19 +188,22 @@ function TemperaturePage() {
     }
   };
 
-  // Helper to detect dark mode
-  const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
-      legend: { display: true },
+      legend: { 
+        display: true,
+        labels: {
+          color: darkMode ? '#fff' : '#222' // <-- Set legend text color
+        }
+      },
       title: {
         display: true,
         text: 'Penguin Temperature Data',
-        font: { size: 20 }
+        font: { size: 20 },
+        color: darkMode ? '#fff' : '#222' // <-- Set title color
       },
       tooltip: { enabled: !isCustomLong }
     },
@@ -217,12 +221,29 @@ function TemperaturePage() {
       }
     },
     scales: {
+      x: {
+        ticks: {
+          color: darkMode ? '#fff' : '#222' // <-- Set x-axis label color
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' // Optional: grid color
+        }
+      },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Temperature (°C)' }
+        title: { 
+          display: true, 
+          text: 'Temperature (°C)',
+          color: darkMode ? '#fff' : '#222' // <-- Set y-axis title color
+        },
+        ticks: {
+          color: darkMode ? '#fff' : '#222' // <-- Set y-axis label color
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' // Optional: grid color
+        }
       }
-    },
-    backgroundColor: isDarkMode ? '#242424' : '#fff', // <-- Add this line
+    }
   };
 
   // --- Responsive Styles ---
@@ -452,11 +473,21 @@ function TemperaturePage() {
       )}
 
       {/* --- Chart and Stats Container --- */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+          <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
+          <input
+            type="checkbox"
+            checked={darkMode}
+            onChange={() => setDarkMode(d => !d)}
+            style={{ width: '20px', height: '20px' }}
+          />
+        </div>
       <div
         ref={chartStatsRef}
         style={{
           ...chartStatsContainerStyle,
-          background: '#242424', // Dark background for contrast
+          background: darkMode ? '#242424' : '#fff',
+          color: darkMode ? '#fff' : '#222',
           overflow: 'visible', // Prevent clipping of stats
           padding: '10px', // Add padding for better appearance
         }}
