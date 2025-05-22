@@ -497,64 +497,68 @@ function TemperaturePage() {
       {/* --- Download Buttons --- */}
       <div style={{ marginTop: '20px' }}>
         <div style={downloadButtonGroupStyle}>
-          <button
-            style={{
-              borderRadius: '5px 0 0 5px',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            Download CSV ▼
-          </button>
-          {showDropdown && (
-            <div style={dropdownMenuStyle}>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('filtered');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download Current Chart Data
-              </button>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('all');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download All Data
-              </button>
-            </div>
-          )}
-          {/* Download Chart Image Button */}
-          <div style={{ position: 'relative' }}>
+          {/* CSV Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              style={{
+                borderRadius: '5px 0 0 5px',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              Download CSV ▼
+            </button>
+            {showDropdown && (
+              <div style={dropdownMenuStyle}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('filtered');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  Download Current Chart Data
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('all');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  Download All Data
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Chart Image Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
             <button
               style={{
                 borderRadius: '0 5px 5px 0',
@@ -570,19 +574,7 @@ function TemperaturePage() {
               Download Chart Image ▼
             </button>
             {showImageDropdown && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                background: '#00aaff',
-                border: '1px solid #0077cc',
-                zIndex: 1000,
-                minWidth: '180px',
-                color: 'white',
-                borderRadius: '0 0 5px 5px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                overflow: 'hidden',
-              }}>
+              <div style={dropdownMenuStyle}>
                 <button
                   style={{
                     display: 'block',
