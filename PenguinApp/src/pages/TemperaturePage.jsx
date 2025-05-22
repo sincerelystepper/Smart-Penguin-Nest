@@ -315,7 +315,7 @@ function TemperaturePage() {
       <div className="egg-menu-wrapper">
   <EggMenu />
 </div>
-<h1>!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</h1>
+<h1>Temperature</h1>
 <div className="range-selector-container">
   <div
     style={{

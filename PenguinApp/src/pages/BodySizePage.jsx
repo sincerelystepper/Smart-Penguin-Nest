@@ -313,6 +313,8 @@ function BodySizePage() {
         <EggMenu />
       </div>
 
+      <h1>Temperature</h1>
+      
       <div className="range-selector-container">
         <div
           style={{

@@ -1,23 +1,17 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import viteImagemin from 'vite-plugin-imagemin'
 
-import { defineConfig } from 'vite'
-import imageOptimizer from 'vite-plugin-image-optimizer'
-
-// https://vite.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [react(),
-  imageOptimizer({
-      png: {
-        quality: [0.6, 0.8],
-      },
-      jpeg: {
-        quality: 75,
-      },
-      webp: {
-        quality: 75,
-      },
-    })
+  plugins: [
+    react(),
+    viteImagemin({
+      gifsicle: { optimizationLevel: 7 },
+      optipng: { optimizationLevel: 7 },
+      mozjpeg: { quality: 75 },
+      pngquant: { quality: [0.6, 0.8] },
+      svgo: { plugins: [{ removeViewBox: false }] },
+    }),
   ],
 })
