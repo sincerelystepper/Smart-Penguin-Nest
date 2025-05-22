@@ -339,9 +339,8 @@ function BodySizePage() {
           onChange={e => {
             const value = e.target.value;
             setRangeType(value);
-            const now = new Date();
             if (value == "day") {
-              setEndDate(startDate.getTime() + 24 * 60 * 60 * 1000 - 1);
+              setEndDate(new Date(startDate.getTime() + 24 * 60 * 60 * 1000 - 1));
             } 
           }}
           className="range-select"
