@@ -40,6 +40,7 @@ function FoodMassPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
+  const [darkMode, setDarkMode] = useState(false); // <-- Add this line
 
   // --- Refs for chart and stats (for html2canvas) ---
   const chartStatsRef = useRef(null);
@@ -182,16 +183,23 @@ function FoodMassPage() {
     }
   };
 
+  // Update chartOptions to use darkMode for colors
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
-      legend: { display: true },
+      legend: { 
+        display: true,
+        labels: {
+          color: darkMode ? '#fff' : '#222'
+        }
+      },
       title: {
         display: true,
         text: 'Penguin Food Mass Estimation Data',
-        font: { size: 20 }
+        font: { size: 20 },
+        color: darkMode ? '#fff' : '#222'
       },
       tooltip: { enabled: !isCustomLong }
     },
@@ -209,9 +217,27 @@ function FoodMassPage() {
       }
     },
     scales: {
+      x: {
+        ticks: {
+          color: darkMode ? '#fff' : '#222'
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+        }
+      },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Food Mass (g)' }
+        title: { 
+          display: true, 
+          text: 'Food Mass (g)',
+          color: darkMode ? '#fff' : '#222'
+        },
+        ticks: {
+          color: darkMode ? '#fff' : '#222'
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+        }
       }
     }
   };
@@ -308,7 +334,18 @@ function FoodMassPage() {
     <div style={containerStyle}>
 
       <h1>Food Mass Estimation</h1>
-      
+
+      {/* --- Dark Mode Toggle --- */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
+        <input
+          type="checkbox"
+          checked={darkMode}
+          onChange={() => setDarkMode(d => !d)}
+          style={{ width: '20px', height: '20px' }}
+        />
+      </div>
+
       <div className="egg-menu-wrapper">
         <EggMenu />
       </div>
@@ -439,9 +476,10 @@ function FoodMassPage() {
               ref={chartStatsRef}
               style={{
                 ...chartStatsContainerStyle,
-                background: '#242424', // Dark background for contrast
-                overflow: 'visible', // Prevent clipping of stats
-                padding: '10px', // Add padding for better appearance
+                background: darkMode ? '#242424' : '#fff',
+                color: darkMode ? '#fff' : '#222',
+                overflow: 'visible',
+                padding: '10px',
               }}
             >
               {/* Chart */}
@@ -469,20 +507,20 @@ function FoodMassPage() {
           )}
         </div>
 
-            {/* Stats */}
-            <div style={statsContainerStyle}>
-              {stats && (
-              <>
-                <h3>Statistics</h3>
-                <p><strong>Mean:</strong> {stats.mean.toFixed(2)} g</p>
-                <p><strong>Median:</strong> {stats.median.toFixed(2)} g</p>
-                <p><strong>Max:</strong> {stats.max.toFixed(2)} g</p>
-                <p><strong>Min:</strong> {stats.min.toFixed(2)} g</p>
-                <p><strong>Std Dev:</strong> {stats.stdDev.toFixed(2)}</p>
-              </>
-              )}
-            </div>
-            </div>
+        {/* Stats */}
+        <div style={statsContainerStyle}>
+          {stats && (
+            <>
+              <h3 style={{ color: darkMode ? '#fff' : '#222' }}>Statistics</h3>
+              <p><strong>Mean:</strong> {stats.mean.toFixed(2)} g</p>
+              <p><strong>Median:</strong> {stats.median.toFixed(2)} g</p>
+              <p><strong>Max:</strong> {stats.max.toFixed(2)} g</p>
+              <p><strong>Min:</strong> {stats.min.toFixed(2)} g</p>
+              <p><strong>Std Dev:</strong> {stats.stdDev.toFixed(2)}</p>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* --- Download Buttons --- */}
       <div style={{ marginTop: '20px' }}>

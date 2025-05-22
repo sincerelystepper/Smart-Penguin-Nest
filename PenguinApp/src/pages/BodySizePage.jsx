@@ -43,6 +43,7 @@ function BodySizePage() {
   const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
   const [stats, setStats] = useState(null); // State to hold statistics
   const [showImageDropdown, setShowImageDropdown] = useState(false); // Add this state
+  const [darkMode, setDarkMode] = useState(false); // Add dark mode state
   
   // --- Refs for chart and stats (for html2canvas) ---
   const chartStatsRef = useRef(null);
@@ -193,11 +194,17 @@ function BodySizePage() {
     maintainAspectRatio: false,
     animation: isCustomLong ? false : { duration: 1000 },
     plugins: {
-      legend: { display: true },
+      legend: { 
+        display: true,
+        labels: {
+          color: darkMode ? '#fff' : '#222'
+        }
+      },
       title: {
         display: true,
         text: 'Penguin Body Size Estimation Data',
-        font: { size: 20 }
+        font: { size: 20 },
+        color: darkMode ? '#fff' : '#222'
       },
       tooltip: {
         enabled: !isCustomLong
@@ -217,13 +224,28 @@ function BodySizePage() {
       }
     },
     scales: {
+      x: {
+        ticks: {
+          color: darkMode ? '#fff' : '#222'
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+        }
+      },
       y: {
         beginAtZero: true,
         min: 0,
         max: 1,
         title: {
           display: true,
-          text: 'Body Size (0-1)'
+          text: 'Body Size (0-1)',
+          color: darkMode ? '#fff' : '#222'
+        },
+        ticks: {
+          color: darkMode ? '#fff' : '#222'
+        },
+        grid: {
+          color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
         }
       }
     }
@@ -322,6 +344,17 @@ function BodySizePage() {
 
       <h1>Body Size Estimation</h1>
       
+      {/* --- Dark Mode Toggle --- */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
+        <input
+          type="checkbox"
+          checked={darkMode}
+          onChange={() => setDarkMode(d => !d)}
+          style={{ width: '20px', height: '20px' }}
+        />
+      </div>
+
       <div className="egg-menu-wrapper">
         <EggMenu />
       </div>
@@ -452,9 +485,10 @@ function BodySizePage() {
         ref={chartStatsRef}
         style={{
           ...chartStatsContainerStyle,
-          background: '#242424', // Dark background for contrast
-          overflow: 'visible', // Prevent clipping of stats
-          padding: '10px', // Add padding for better appearance
+          background: darkMode ? '#242424' : '#fff',
+          color: darkMode ? '#fff' : '#222',
+          overflow: 'visible',
+          padding: '10px',
         }}
       >
         <div style={chartContainerStyle} ref={chartOnlyRef}>

@@ -473,15 +473,15 @@ function TemperaturePage() {
       )}
 
       {/* --- Chart and Stats Container --- */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-          <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
-          <input
-            type="checkbox"
-            checked={darkMode}
-            onChange={() => setDarkMode(d => !d)}
-            style={{ width: '20px', height: '20px' }}
-          />
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+        <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
+        <input
+          type="checkbox"
+          checked={darkMode}
+          onChange={() => setDarkMode(d => !d)}
+          style={{ width: '20px', height: '20px' }}
+        />
+      </div>
       <div
         ref={chartStatsRef}
         style={{
@@ -518,7 +518,7 @@ function TemperaturePage() {
         <div style={statsContainerStyle}>
           {stats && (
             <>
-              <h3>Statistics</h3>
+              <h3 style={{ color: darkMode ? '#fff' : '#222' }}>Statistics</h3>
               <p><strong>Mean:</strong> {stats.mean.toFixed(2)} °C</p>
               <p><strong>Median:</strong> {stats.median.toFixed(2)} °C</p>
               <p><strong>Max:</strong> {stats.max.toFixed(2)} °C</p>
