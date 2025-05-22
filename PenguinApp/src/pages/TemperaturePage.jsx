@@ -248,8 +248,10 @@ function TemperaturePage() {
     flex: '1 1 200px',
     minWidth: '200px',
     maxWidth: '5000px',
-    aspectRatio: '2 / 1', // width:height = 2:1, so height is half the width
     width: '100%',
+    aspectRatio: '2 / 1', // width:height = 2:1
+    height: 'auto',
+    maxHeight: '850px',
     boxSizing: 'border-box',
   };
 
