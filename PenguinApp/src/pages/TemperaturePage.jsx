@@ -45,7 +45,17 @@ function TemperaturePage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
-  const [darkMode, setDarkMode] = useState(false); // Dark mode state
+  const [darkMode, setDarkMode] = useState(() =>
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+
+  // Listen for browser color scheme changes and update darkMode accordingly
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = e => setDarkMode(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const { rangeType, setRangeType, startDate, setStartDate, endDate, setEndDate } = useRange();
 

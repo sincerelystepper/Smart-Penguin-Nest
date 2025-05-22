@@ -40,7 +40,9 @@ function FoodMassPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
-  const [darkMode, setDarkMode] = useState(false); // <-- Add this line
+  const [darkMode, setDarkMode] = useState(() => 
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  ); // <-- Add this line
 
   // --- Refs for chart and stats (for html2canvas) ---
   const chartStatsRef = useRef(null);
@@ -328,6 +330,14 @@ function FoodMassPage() {
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
     overflow: 'hidden',
   };
+
+  // Listen for browser color scheme changes and update darkMode accordingly
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = e => setDarkMode(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   // --- Render UI ---
   return (

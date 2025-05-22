@@ -43,8 +43,18 @@ function BodySizePage() {
   const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
   const [stats, setStats] = useState(null); // State to hold statistics
   const [showImageDropdown, setShowImageDropdown] = useState(false); // Add this state
-  const [darkMode, setDarkMode] = useState(false); // Add dark mode state
-  
+  const [darkMode, setDarkMode] = useState(() =>
+  window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+);
+
+// Listen for browser color scheme changes and update darkMode accordingly
+useEffect(() => {
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const handler = e => setDarkMode(e.matches);
+  mq.addEventListener('change', handler);
+  return () => mq.removeEventListener('change', handler);
+}, []);
+
   // --- Refs for chart and stats (for html2canvas) ---
   const chartStatsRef = useRef(null);
   const chartOnlyRef = useRef(null);
