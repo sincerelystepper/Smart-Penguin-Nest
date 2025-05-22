@@ -13,7 +13,7 @@ const EggMenu = () => {
         top: '20px',
         left: '20px',
         cursor: 'pointer',
-        width: open ? 'min(calc(90vw), 500px)' : '45px',
+        width: open ? 'min(calc(95vw), 500px)' : '45px',
         maxWidth: '1500px',
         height: '53px',
         display: 'flex',

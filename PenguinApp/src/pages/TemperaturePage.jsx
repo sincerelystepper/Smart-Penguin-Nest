@@ -253,6 +253,9 @@ function TemperaturePage() {
     width: '100%',
     aspectRatio: '3/1',
     boxSizing: 'border-box',
+    height: 'auto',
+    minHeight: '300px',
+    maxHeight: '850px', // Limit max height so it shrinks with width
   };
 
   // Stats container with flexible width and padding
