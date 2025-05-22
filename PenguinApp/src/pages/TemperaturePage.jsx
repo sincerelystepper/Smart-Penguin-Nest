@@ -293,7 +293,7 @@ function TemperaturePage() {
     position: 'relative',
     display: 'inline-flex',
     flexWrap: 'wrap',
-    gap: '5px',
+    gap: '90px',
   };
 
   // Style adjustments for dropdown menu to be full width on small screens
@@ -445,7 +445,15 @@ function TemperaturePage() {
       )}
 
       {/* --- Chart and Stats Container --- */}
-      <div style={chartStatsContainerStyle} ref={chartStatsRef}>
+      <div
+        ref={chartStatsRef}
+        style={{
+          ...chartStatsContainerStyle,
+          background: '#242424', // Dark background for contrast
+          overflow: 'visible', // Prevent clipping of stats
+          padding: '10px', // Add padding for better appearance
+        }}
+      >
         <div style={chartContainerStyle} ref={chartOnlyRef}>
           {chartData ? (
             <Line
