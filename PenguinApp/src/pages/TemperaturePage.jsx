@@ -249,9 +249,9 @@ function TemperaturePage() {
     minWidth: '200px',
     maxWidth: '5000px',
     width: '100%',
-    aspectRatio: '2 / 1', // width:height = 2:1
     height: 'auto',
     maxHeight: '850px',
+    minHeight: '300px',
     boxSizing: 'border-box',
   };
 
