@@ -307,7 +307,7 @@ function TemperaturePage() {
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
-    minWidth: '247px',
+    minWidth: '98%',
     color: 'white',
     borderRadius: '0 0 5px 5px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
