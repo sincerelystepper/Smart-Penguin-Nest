@@ -6,7 +6,6 @@ import Home from './pages/Home.jsx';
 import TemperaturePage from './pages/TemperaturePage.jsx';
 import FoodMassPage from './pages/FoodMassPage.jsx';
 import BodySizePage from './pages/BodySizePage.jsx';
-// You can add more pages later
 
 function App() {
   return (
