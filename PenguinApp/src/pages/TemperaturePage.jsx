@@ -261,8 +261,8 @@ function TemperaturePage() {
     flexDirection: 'column',
     gap: '10px',
     flex: '1 1 150px',
-    minWidth: '250px',
-    maxWidth: '200px',
+    minWidth: '150px',
+    maxWidth: '160px',
     boxSizing: 'border-box',
     padding: '0 10px',
   };
