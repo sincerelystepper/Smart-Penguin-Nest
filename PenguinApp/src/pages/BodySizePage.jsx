@@ -529,7 +529,7 @@ useEffect(() => {
         <div style={statsContainerStyle}>
           {stats && (
             <>
-              <h3>Statistics</h3>
+              <h3 style={{ color: darkMode ? '#fff' : '#222' }}>Statistics</h3>
               <p><strong>Mean:</strong> {stats.mean.toFixed(3)}</p>
               <p><strong>Median:</strong> {stats.median.toFixed(3)}</p>
               <p><strong>Max:</strong> {stats.max.toFixed(3)}</p>
