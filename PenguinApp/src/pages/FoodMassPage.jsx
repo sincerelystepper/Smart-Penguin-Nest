@@ -326,13 +326,9 @@ function FoodMassPage() {
           onChange={e => {
             const value = e.target.value;
             setRangeType(value);
-            if (value === "day") {
-              // Set startDate and endDate to today by default
-              const today = new Date();
-              setStartDate(today);
-              setEndDate(new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1));
-            }
-            // Optionally, handle other range types similarly if needed
+            if (value == "day") {
+              setEndDate(new Date(startDate.getTime() + 24 * 60 * 60 * 1000 - 1));
+            } 
           }}
           className="range-select"
         >
