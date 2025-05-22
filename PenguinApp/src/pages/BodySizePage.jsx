@@ -354,17 +354,6 @@ useEffect(() => {
 
       <h1>Body Size Estimation</h1>
       
-      {/* --- Dark Mode Toggle --- */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-        <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
-        <input
-          type="checkbox"
-          checked={darkMode}
-          onChange={() => setDarkMode(d => !d)}
-          style={{ width: '20px', height: '20px' }}
-        />
-      </div>
-
       <div className="egg-menu-wrapper">
         <EggMenu />
       </div>
@@ -489,6 +478,17 @@ useEffect(() => {
               </div>
             </div>
             )}
+
+            {/* --- Dark Mode Toggle --- */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <label style={{ fontWeight: 'bold', marginRight: '8px' }}>Dark Mode:</label>
+                <input
+                  type="checkbox"
+                  checked={darkMode}
+                  onChange={() => setDarkMode(d => !d)}
+                  style={{ width: '20px', height: '20px' }}
+                />
+              </div>
 
             {/* --- Chart and Stats Container --- */}
             <div
