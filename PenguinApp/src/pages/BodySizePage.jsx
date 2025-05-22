@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +8,7 @@ import '../App.css';
 import { Link } from 'react-router-dom';
 import EggMenu from '../components/eggMenu';
 import { useRange } from '../RangeContext';
+import html2canvas from 'html2canvas'; // Add this import
 // --- API URL Setup ---
 // Update these endpoints to your actual body size endpoints!
 const BASE_API = 'https://server-api-609n.onrender.com';
@@ -41,7 +42,12 @@ function BodySizePage() {
   const [downloadType, setDownloadType] = useState('filtered'); // State to control download type
   const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
   const [stats, setStats] = useState(null); // State to hold statistics
+  const [showImageDropdown, setShowImageDropdown] = useState(false); // Add this state
   
+  // --- Refs for chart and stats (for html2canvas) ---
+  const chartStatsRef = useRef(null);
+  const chartOnlyRef = useRef(null);
+
   // Helper: is custom range > 2 weeks?
   const isCustomLong =
     rangeType === "custom" &&
@@ -290,7 +296,7 @@ function BodySizePage() {
     position: 'relative',
     display: 'inline-flex',
     flexWrap: 'wrap',
-    gap: '5px',
+    gap: '76px', // Match TemperaturePage gap for consistency
   };
 
   const dropdownMenuStyle = {
@@ -300,7 +306,7 @@ function BodySizePage() {
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
-    minWidth: '150px',
+    minWidth: '98%', // Match TemperaturePage for full width
     color: 'white',
     borderRadius: '0 0 5px 5px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -439,9 +445,16 @@ function BodySizePage() {
             )}
 
             {/* --- Chart and Stats Container --- */}
-            <div style={chartStatsContainerStyle}>
-            {/* Chart */}
-                    <div style={chartContainerStyle}>
+            <div
+        ref={chartStatsRef}
+        style={{
+          ...chartStatsContainerStyle,
+          background: '#242424', // Dark background for contrast
+          overflow: 'visible', // Prevent clipping of stats
+          padding: '10px', // Add padding for better appearance
+        }}
+      >
+        <div style={chartContainerStyle} ref={chartOnlyRef}>
           {chartData ? (
             <Line
               data={chartData}
@@ -483,93 +496,149 @@ function BodySizePage() {
       {/* --- Download Buttons --- */}
       <div style={{ marginTop: '20px' }}>
         <div style={downloadButtonGroupStyle}>
-          <button
-            style={{
-              borderRadius: '5px 0 0 5px',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            Download CSV ▼
-          </button>
-          {showDropdown && (
-            <div style={dropdownMenuStyle}>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('filtered');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download Current Chart Data
-              </button>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('all');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download All Data
-              </button>
-            </div>
-          )}
-          {/* Download Chart Image Button */}
-          <button
-            style={{
-              borderRadius: '0 5px 5px 0',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => {
-              // Download chart image logic
-              const chartInstance = window._chartRef && window._chartRef.chartInstance
-                ? window._chartRef.chartInstance
-                : window._chartRef && window._chartRef instanceof Object && window._chartRef;
-              if (chartInstance && chartInstance.toBase64Image) {
-                const url = chartInstance.toBase64Image();
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'body_size_chart.png';
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-              } else {
-                alert('Chart image download not supported.');
-              }
-            }}
-          >
-            Download Chart Image
-          </button>
+          {/* CSV Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              style={{
+                borderRadius: '5px 0 0 5px',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              Download Raw Data (CSV) ▼
+            </button>
+            {showDropdown && (
+              <div style={dropdownMenuStyle}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('filtered');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  Currently Selected Range
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('all');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  All Data
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Chart Image Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              style={{
+                borderRadius: '0 5px 5px 0',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowImageDropdown(!showImageDropdown)}
+            >
+              Download Chart Image ▼
+            </button>
+            {showImageDropdown && (
+              <div style={dropdownMenuStyle}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart only
+                    const chartInstance = window._chartRef && window._chartRef.chartInstance
+                      ? window._chartRef.chartInstance
+                      : window._chartRef && window._chartRef instanceof Object && window._chartRef;
+                    if (chartInstance && chartInstance.toBase64Image) {
+                      const url = chartInstance.toBase64Image();
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'body_size_chart.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart image download not supported.');
+                    }
+                  }}
+                >
+                  Chart Only
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart + stats using html2canvas
+                    if (chartStatsRef.current) {
+                      const canvas = await html2canvas(chartStatsRef.current);
+                      const url = canvas.toDataURL('image/png');
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'body_size_chart_and_stats.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart+Stats image download not supported.');
+                    }
+                  }}
+                >
+                  Chart + Statistics
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
 // --- Imports ---
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../App.css';
 import EggMenu from '../components/eggMenu';
 import { useRange } from '../RangeContext';
+import html2canvas from 'html2canvas';
 
 import {
   Chart as ChartJS,
@@ -37,7 +38,12 @@ function FoodMassPage() {
   const [error, setError] = useState(null);
   const [downloadType, setDownloadType] = useState('filtered');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showImageDropdown, setShowImageDropdown] = useState(false);
   const [stats, setStats] = useState(null);
+
+  // --- Refs for chart and stats (for html2canvas) ---
+  const chartStatsRef = useRef(null);
+  const chartOnlyRef = useRef(null);
 
   // Helper: is custom range > 2 weeks?
   const isCustomLong =
@@ -277,7 +283,7 @@ function FoodMassPage() {
     position: 'relative',
     display: 'inline-flex',
     flexWrap: 'wrap',
-    gap: '5px',
+    gap: '76px', // Match TemperaturePage gap for consistency
   };
 
   const dropdownMenuStyle = {
@@ -287,7 +293,7 @@ function FoodMassPage() {
     background: '#00aaff',
     border: '1px solid #0077cc',
     zIndex: 1000,
-    minWidth: '150px',
+    minWidth: '98%',
     color: 'white',
     borderRadius: '0 0 5px 5px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -426,9 +432,17 @@ function FoodMassPage() {
             )}
 
             {/* --- Chart and Stats Container --- */}
-            <div style={chartStatsContainerStyle}>
-            {/* Chart */}
-            <div style={chartContainerStyle}>
+            <div
+              ref={chartStatsRef}
+              style={{
+                ...chartStatsContainerStyle,
+                background: '#242424', // Dark background for contrast
+                overflow: 'visible', // Prevent clipping of stats
+                padding: '10px', // Add padding for better appearance
+              }}
+            >
+              {/* Chart */}
+              <div style={chartContainerStyle} ref={chartOnlyRef}>
           {chartData ? (
             <Line
               data={chartData}
@@ -470,93 +484,149 @@ function FoodMassPage() {
       {/* --- Download Buttons --- */}
       <div style={{ marginTop: '20px' }}>
         <div style={downloadButtonGroupStyle}>
-          <button
-            style={{
-              borderRadius: '5px 0 0 5px',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            Download CSV ▼
-          </button>
-          {showDropdown && (
-            <div style={dropdownMenuStyle}>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('filtered');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download Current Chart Data
-              </button>
-              <button
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '8px 15px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-                onClick={() => {
-                  setDownloadType('all');
-                  setShowDropdown(false);
-                  handleDownloadCSV();
-                }}
-              >
-                Download All Data
-              </button>
-            </div>
-          )}
-          {/* Download Chart Image Button */}
-          <button
-            style={{
-              borderRadius: '0 5px 5px 0',
-              border: '1px solid #0077cc',
-              background: '#00aaff',
-              color: 'white',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '8px 15px',
-            }}
-            onClick={() => {
-              // Download chart image logic
-              const chartInstance = window._chartRef && window._chartRef.chartInstance
-                ? window._chartRef.chartInstance
-                : window._chartRef && window._chartRef instanceof Object && window._chartRef;
-              if (chartInstance && chartInstance.toBase64Image) {
-                const url = chartInstance.toBase64Image();
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'food_mass_chart.png';
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-              } else {
-                alert('Chart image download not supported.');
-              }
-            }}
-          >
-            Download Chart Image
-          </button>
+          {/* CSV Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              style={{
+                borderRadius: '5px 0 0 5px',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              Download Raw Data (CSV) ▼
+            </button>
+            {showDropdown && (
+              <div style={dropdownMenuStyle}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('filtered');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  Currently Selected Range
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={() => {
+                    setDownloadType('all');
+                    setShowDropdown(false);
+                    handleDownloadCSV();
+                  }}
+                >
+                  All Data
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Chart Image Button + Dropdown */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              style={{
+                borderRadius: '0 5px 5px 0',
+                border: '1px solid #0077cc',
+                background: '#00aaff',
+                color: 'white',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                padding: '8px 15px',
+              }}
+              onClick={() => setShowImageDropdown(!showImageDropdown)}
+            >
+              Download Chart Image ▼
+            </button>
+            {showImageDropdown && (
+              <div style={dropdownMenuStyle}>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart only
+                    const chartInstance = window._chartRef && window._chartRef.chartInstance
+                      ? window._chartRef.chartInstance
+                      : window._chartRef && window._chartRef instanceof Object && window._chartRef;
+                    if (chartInstance && chartInstance.toBase64Image) {
+                      const url = chartInstance.toBase64Image();
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'food_mass_chart.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart image download not supported.');
+                    }
+                  }}
+                >
+                  Chart Only
+                </button>
+                <button
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 15px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                  onClick={async () => {
+                    setShowImageDropdown(false);
+                    // Download chart + stats using html2canvas
+                    if (chartStatsRef.current) {
+                      const canvas = await html2canvas(chartStatsRef.current);
+                      const url = canvas.toDataURL('image/png');
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = 'food_mass_chart_and_stats.png';
+                      document.body.appendChild(link);
+                      link.click();
+                      link.remove();
+                    } else {
+                      alert('Chart+Stats image download not supported.');
+                    }
+                  }}
+                >
+                  Chart + Statistics
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
