@@ -417,10 +417,6 @@ app.get('/', (req, res) => {
   res.send("API is up and running");
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
 app.listen(port, '0.0.0.0', () => {
-  console.log(`🚀 Server running at http://0.0.0.0:${port}`);
+  console.log(`Server running at http://0.0.0.0:${port}`);
 });
