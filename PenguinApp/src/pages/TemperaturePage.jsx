@@ -119,8 +119,8 @@ function TemperaturePage() {
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 tension: 0.3,
                 fill: true,
-                pointRadius: rangeType === 'custom' ? 3 : 3,
-                pointHoverRadius: rangeType === 'custom' ? 3 : 3.4,
+                pointRadius: rangeType === 'custom' ? 2 : 2,
+                pointHoverRadius: rangeType === 'custom' ? 2 : 3,
                 pointBackgroundColor: 'rgba(75, 192, 192, 0.2)',
                 pointBorderColor: 'rgba(75, 192, 192, 1)',
                 pointHitRadius: 0,
@@ -248,7 +248,9 @@ function TemperaturePage() {
     flex: '1 1 200px', // flexible width but minimum 300px
     minWidth: '200px',
     maxWidth: '5000px',
-    height: '400px', // reduced height for mobile
+    minHeight: '400px',
+    maxHeight: '2500px',
+    height: '100%',
     boxSizing: 'border-box',
   };
 

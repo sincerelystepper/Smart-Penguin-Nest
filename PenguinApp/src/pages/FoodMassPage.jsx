@@ -114,8 +114,8 @@ function FoodMassPage() {
         backgroundColor: `hsla(${(pid * 120) % 360}, 70%, 50%, 0.2)`,
         tension: 0.3,
         fill: false,
-        pointRadius: isCustomLong ? 1 : 1,
-        pointHoverRadius: isCustomLong ? 1 : 1.2,
+        pointRadius: isCustomLong ? 2 : 2,
+        pointHoverRadius: isCustomLong ? 2 : 3,
       }));
 
       const allValues = Object.values(penguinMap).flatMap(p => Object.values(p));
@@ -237,7 +237,9 @@ function FoodMassPage() {
     flex: '1 1 200px',
     minWidth: '200px',
     maxWidth: '5000px',
-    height: '400px',
+    minHeight: '400px',
+    maxHeight: '2500px',
+    height: '100%',
     boxSizing: 'border-box',
   };
 
@@ -247,8 +249,8 @@ function FoodMassPage() {
     flexDirection: 'column',
     gap: '10px',
     flex: '1 1 150px',
-    minWidth: '250px',
-    maxWidth: '200px',
+    minWidth: '150px',
+    maxWidth: '160px',
     boxSizing: 'border-box',
     padding: '0 10px',
   };
