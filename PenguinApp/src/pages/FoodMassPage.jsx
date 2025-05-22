@@ -239,14 +239,17 @@ function FoodMassPage() {
     boxSizing: 'border-box',
   };
 
+  // Chart container with responsive width and height (copied from TemperaturePage)
   const chartContainerStyle = {
     flex: '1 1 200px',
     minWidth: '200px',
     maxWidth: '5000px',
-    minHeight: '400px',
-    maxHeight: '2500px',
-    height: '100%',
+    width: '100%',
+    aspectRatio: '3/1',
     boxSizing: 'border-box',
+    height: 'auto',
+    minHeight: '300px',
+    maxHeight: '850px', // Limit max height so it shrinks with width
   };
 
   const statsContainerStyle = {
