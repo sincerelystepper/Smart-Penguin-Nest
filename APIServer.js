@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const { connectToDatabase } = require('./dbCon');
+const path = require('path');
 
 const { Parser } = require('json2csv');
 
@@ -414,6 +415,10 @@ async function getDailyAverage(collection, year, month) {
 
 app.get('/', (req, res) => {
   res.send("API is up and running");
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
