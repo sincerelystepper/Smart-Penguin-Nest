@@ -249,7 +249,7 @@ function TemperaturePage() {
     minWidth: '200px',
     maxWidth: '5000px',
     width: '100%',
-    height: 'auto',
+    aspectRatio: '2/1',
     maxHeight: '850px',
     minHeight: '300px',
     boxSizing: 'border-box',
