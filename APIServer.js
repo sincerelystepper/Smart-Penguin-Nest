@@ -22,8 +22,13 @@ app.post('/addTemp', async (req, res) => { // Post request to send temperature d
   /** Example of how to use this endpoint with curl
    /curl -X POST https://server-api-609n.onrender.com/addTemp \
    -H "Content-Type: application/json" \
-   -d '{"temperature": 22.5, "timestamp": "2025-05-13T14:30:00Z"}'
+   -H "api-key: API_KEY" \
+   -d '{"temperature": 22.5, "timestamp": "2026-05-13T14:30:00Z"}'
   */
+ const apiKey = req.header("api-key"); // Get the API key from the request header
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data"); // Explicitly call db() on the client
@@ -47,6 +52,12 @@ app.post('/addTemp', async (req, res) => { // Post request to send temperature d
 });
 
 app.post('/addFoodMass', async (req, res) => { // Post request to send food mass data
+
+  const apiKey = req.header("api-key"); // Check for API key in the request header
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data"); // Explicitly call db() on the client
@@ -72,6 +83,12 @@ app.post('/addFoodMass', async (req, res) => { // Post request to send food mass
 });
 
 app.post('/addBodySize', async (req, res) => { // Post request to send body size data
+
+  const apiKey = req.header("api-key"); // Check for API key in the request header
+  if (apiKey !== process.env.API_KEY) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data"); // Explicitly call db() on the client
@@ -242,10 +259,6 @@ app.get('/downloadTempDataFiltered', async (req, res) => { // Get request to dow
 app.get('/avgTemp', async (req, res) => { // Get request to fetch average temperature data
   const { rangeType, year, month } = req.query;
 
-  if (!year || isNaN(year)) {
-    return res.status(400).json({ error: "Missing or invalid year parameter" });
-  }
-
   try {
     const client = await connectToDatabase();
     const db = client.db("Penguin_Data");
@@ -254,10 +267,13 @@ app.get('/avgTemp', async (req, res) => { // Get request to fetch average temper
     let data;
 
     if (rangeType === 'year') {
+      if (!year || isNaN(year)) {
+        return res.status(400).json({ error: "Missing or invalid year" });
+      }
       data = await getMonthlyAverage(collection, parseInt(year));
     } else if (rangeType === 'month') {
       if (!month || isNaN(month)) {
-        return res.status(400).json({ error: "Missing or invalid month parameter" });
+        return res.status(400).json({ error: "Missing or invalid month" });
       }
       data = await getDailyAverage(collection, parseInt(year), parseInt(month));
     } else {
@@ -306,9 +322,7 @@ app.get('/avgBodySize', async (req, res) => { // Get request to fetch average bo
 app.get('/avgFoodMass', async (req, res) => { // Get request to fetch average foodMass data
   const { rangeType, year, month } = req.query;
 
-  if (!year || isNaN(year)) {
-    return res.status(400).json({ error: "Missing or invalid year parameter" });
-  }
+  
 
   try {
     const client = await connectToDatabase();
@@ -318,6 +332,9 @@ app.get('/avgFoodMass', async (req, res) => { // Get request to fetch average fo
     let data;
 
     if (rangeType === 'year') {
+      if (!year || isNaN(year)) {
+        return res.status(400).json({ error: "Missing or invalid year parameter" });
+      }
       data = await getMonthlyAverage(collection, parseInt(year));
     } else if (rangeType === 'month') {
       if (!month || isNaN(month)) {
