@@ -1,2 +1,2 @@
 # EEE4113FGroup9
-API server for EEE4113F penguin project
+Project files for smart Penguin nest box including CAD files, Microcontroller code, Back end API and frontend Application
