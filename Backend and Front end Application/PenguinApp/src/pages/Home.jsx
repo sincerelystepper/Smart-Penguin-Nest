@@ -31,8 +31,8 @@ export default function Home() {
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-        <h1>Welcome to Home Page</h1>
-        <h3>Latest data</h3>
+        <h1>Welcome to Smart Nest Box Home Page</h1>
+        <h3>Latest Penguin Data</h3>
         <div style={{
           display: 'flex',
           flexDirection: 'column',
