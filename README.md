@@ -539,3 +539,255 @@ Although developed as a prototype research platform, the firmware architecture e
 
 ---
 
+---
+
+# Electronics Design
+
+The Smart Penguin Nest embedded subsystem was initially developed using modular development hardware to accelerate firmware development and subsystem validation. This prototyping approach enabled rapid hardware iteration while minimizing the complexity associated with early PCB fabrication.
+
+Following successful validation of the sensing and communication subsystems, the complete electronic design was captured in **KiCad**, providing a scalable hardware foundation for future revisions.
+
+The schematic was developed with several engineering goals in mind:
+
+* Modular sensor interfaces
+* Stable power distribution
+* Expandable communication buses
+* Simplified hardware debugging
+* Future PCB implementation
+* Improved maintainability
+
+The resulting electronic architecture separates sensing, communication, processing and power management into clearly defined functional blocks suitable for future deployment-ready hardware.
+
+---
+
+## Power Distribution
+
+Reliable power delivery is fundamental to accurate embedded instrumentation.
+
+The prototype platform incorporates regulated power rails supplying the ESP32, sensing peripherals and supporting electronics while maintaining stable operating voltages throughout the system.
+
+Laboratory characterization included:
+
+* Buck converter adjustment
+* Output voltage verification
+* Current consumption measurements
+* Power-up validation
+* Regulator stability testing
+
+These measurements ensured stable operation before integrating precision sensing hardware such as the HX711 load-cell amplifier.
+
+---
+
+## Communication Interfaces
+
+The monitoring platform integrates multiple communication protocols within a single embedded node.
+
+| Interface | Connected Devices            |
+| --------- | ---------------------------- |
+| SPI       | MFRC522 RFID Reader          |
+| I²C       | MLX90614, SHTC3              |
+| One-Wire  | DS18B20                      |
+| GPIO      | HX711 Load Cell Interface    |
+| WiFi      | Remote Backend Communication |
+
+Using dedicated communication buses simplifies firmware development while allowing each sensing subsystem to operate independently.
+
+---
+
+## Schematic Development
+
+The KiCad project included within this repository documents the complete electronic design produced following prototype validation.
+
+The schematic captures:
+
+* ESP32 controller integration
+* Sensor interconnections
+* Power distribution
+* Connector assignments
+* Communication buses
+* Supporting passive components
+
+Although the prototype was assembled using development modules, the schematic provides the basis for future custom PCB development and production-ready hardware revisions.
+
+---
+
+# Validation & Testing
+
+The embedded platform underwent extensive laboratory testing throughout development.
+
+Rather than validating only the complete system, each subsystem was independently characterized before integration.
+
+Testing activities included:
+
+* Power subsystem verification
+* Sensor initialization
+* Load-cell calibration
+* Temperature sensor validation
+* RFID communication testing
+* WiFi connectivity
+* Backend communication
+* Long-duration firmware testing
+* System integration
+
+This iterative validation strategy significantly reduced debugging complexity while improving overall system reliability.
+
+---
+
+# Engineering Challenges
+
+Developing a multi-sensor embedded monitoring platform presented several engineering challenges.
+
+## Precision Load-Cell Measurements
+
+Strain-gauge measurements are highly susceptible to electrical noise and mechanical disturbances.
+
+Reliable measurements required careful calibration, averaging and validation of the complete measurement chain.
+
+---
+
+## Stable Power Distribution
+
+Accurate environmental sensing depends upon stable supply voltages.
+
+Power characterization was therefore performed before integrating sensing hardware to eliminate power-related measurement errors.
+
+---
+
+## Multi-Protocol Communication
+
+The ESP32 simultaneously interfaces with devices using SPI, I²C, One-Wire and GPIO interfaces.
+
+Managing multiple communication protocols while maintaining reliable acquisition required careful firmware organization and modular driver development.
+
+---
+
+## Incremental Integration
+
+Rather than attempting complete system integration immediately, each hardware subsystem was independently validated before incorporation into the final monitoring platform.
+
+This significantly simplified debugging while reducing project risk.
+
+---
+
+# Repository Structure
+
+```text
+Smart-Penguin-Nest/
+│
+├── firmware/
+│   ├── Sensor Initialization
+│   ├── Load Cell Calibration
+│   ├── Environmental Monitoring
+│   ├── Integrated Firmware
+│   └── Supporting Source Code
+│
+├── schematics/
+│   └── KiCad Design Files
+│
+├── images/
+│   ├── Prototype Hardware
+│   ├── Laboratory Validation
+│   ├── Calibration
+│   ├── Power Testing
+│   └── System Integration
+│
+├── docs/
+│   └── Project Documentation
+│
+└── README.md
+```
+
+---
+
+# Skills Demonstrated
+
+This project demonstrates practical experience across several embedded systems engineering disciplines.
+
+### Embedded Systems
+
+* ESP32 Firmware Development
+* Embedded C++
+* Hardware Bring-Up
+* Peripheral Integration
+* Real-Time Sensor Acquisition
+
+### Electronics
+
+* KiCad Schematic Capture
+* Power Distribution
+* Embedded Hardware Integration
+* Electronic Prototyping
+* Hardware Validation
+
+### Instrumentation
+
+* Precision Load-Cell Measurement
+* HX711 Integration
+* Sensor Calibration
+* Environmental Monitoring
+* Measurement Processing
+
+### Communication
+
+* WiFi Networking
+* HTTP Communication
+* REST API Integration
+* SPI
+* I²C
+* One-Wire
+
+### Engineering
+
+* Hardware Debugging
+* Laboratory Validation
+* Prototype Development
+* System Integration
+* Technical Documentation
+
+---
+
+# Future Improvements
+
+Although the prototype successfully demonstrated the feasibility of the monitoring platform, several opportunities remain for future development.
+
+Planned improvements include:
+
+* Custom production PCB
+* Rugged environmental enclosure
+* Battery-powered operation
+* Low-power firmware optimization
+* OTA firmware updates
+* Secure cloud communication
+* Remote device diagnostics
+* Edge-based data processing
+* Improved environmental protection for field deployment
+
+These enhancements would further improve long-term reliability while reducing maintenance requirements during remote operation.
+
+---
+
+# Acknowledgements
+
+This project was completed as part of a multidisciplinary engineering effort supporting wildlife conservation research focused on African Penguins.
+
+While the overall project involved contributions from multiple engineering disciplines, this repository documents my contribution to the embedded electronics subsystem, including firmware development, sensor integration, instrumentation, electronic design and hardware validation.
+
+---
+
+# Closing Remarks
+
+The Smart Penguin Nest demonstrates the complete engineering lifecycle of an embedded environmental monitoring platform—from initial hardware prototyping and sensor evaluation through firmware development, calibration, schematic design and system validation.
+
+Although originally developed to support wildlife conservation research, the underlying architecture is broadly applicable to numerous embedded sensing applications including Industrial IoT, precision agriculture, livestock monitoring, environmental instrumentation and remote telemetry.
+
+This project reflects my approach to embedded systems engineering: build incrementally, validate thoroughly, document carefully and design with future scalability in mind.
+
+---
+
+<p align="center">
+
+**Designed and developed with a passion for Embedded Systems Engineering, Instrumentation and Intelligent Monitoring Platforms.**
+
+</p>
+
+
