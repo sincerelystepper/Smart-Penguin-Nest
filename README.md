@@ -220,5 +220,142 @@ These validation steps ensured reliable power delivery to the ESP32 and all conn
 
 ---
 
+---
+
+# Sensor Integration
+
+A primary objective of the Smart Penguin Nest platform was the reliable acquisition of environmental and physiological measurements from multiple sensing technologies.
+
+Rather than relying on a single sensor, the embedded platform integrates a heterogeneous collection of digital, analog and precision instrumentation devices, each selected to monitor a different aspect of the nesting environment.
+
+Each sensor required dedicated firmware development, hardware integration, interface validation and system-level testing before being incorporated into the complete embedded monitoring platform.
+
+---
+
+# Embedded Sensor Suite
+
+| Sensor                | Purpose                                      | Interface  |
+| --------------------- | -------------------------------------------- | ---------- |
+| **HX711 + Load Cell** | Precision body weight measurement            | 24-bit ADC |
+| **DS18B20**           | Ambient temperature sensing                  | 1-Wire     |
+| **SHTC3**             | Temperature & Relative Humidity              | I²C        |
+| **MLX90614**          | Non-contact infrared temperature measurement | I²C        |
+| **MFRC522**           | RFID identification                          | SPI        |
+
+The modular firmware architecture allows each sensing subsystem to operate independently while contributing measurements to a common acquisition and communication framework.
+
+---
+
+# Precision Weight Measurement
+
+## HX711 Load Cell Instrumentation
+
+One of the primary engineering challenges was the accurate measurement of penguin body mass without disturbing the animal.
+
+This was achieved using a strain-gauge load cell coupled with the **HX711**, a precision 24-bit analog-to-digital converter specifically designed for load-cell instrumentation.
+
+Unlike conventional ADCs integrated into microcontrollers, the HX711 provides extremely high measurement resolution together with a programmable gain amplifier, making it particularly suitable for low-level bridge sensor measurements.
+
+The embedded firmware performs:
+
+* Load-cell initialization
+* Zero-offset (tare) measurement
+* Continuous sampling
+* Digital averaging
+* Calibration factor application
+* Stable weight computation
+
+Calibration parameters are stored within the ESP32's non-volatile memory, allowing the system to preserve calibration between power cycles without requiring repeated field calibration.
+
+<p align="center">
+<img src="images/weight measuring taring and finding the scale factor.png" width="800">
+</p>
+
+<p align="center">
+<i>Figure 5 — Load-cell calibration procedure used to determine scale factors and improve measurement accuracy.</i>
+</p>
+
+---
+
+# Environmental Monitoring
+
+## Temperature Measurement
+
+Environmental temperature is an important parameter when monitoring nesting conditions.
+
+Initial subsystem validation utilised the **DS18B20** digital temperature sensor because of its simplicity, robustness and single-wire communication interface.
+
+The sensor firmware was developed to provide reliable periodic measurements while maintaining low processor overhead.
+
+Development activities included:
+
+* Sensor initialization
+* Device discovery
+* Temperature acquisition
+* Data validation
+* Integration into the monitoring framework
+
+As the project evolved, environmental sensing capabilities were expanded through the integration of the **SHTC3**, enabling simultaneous measurement of temperature and relative humidity.
+
+This upgrade simplified hardware integration while improving the quantity of environmental information available to researchers.
+
+---
+
+# Infrared Temperature Measurement
+
+## MLX90614
+
+To complement conventional contact-based measurements, the monitoring platform incorporates the **MLX90614** infrared temperature sensor.
+
+Unlike traditional sensors that require direct physical contact, the MLX90614 measures emitted infrared radiation, allowing non-contact surface temperature estimation.
+
+Within the Smart Penguin Nest platform this capability enables:
+
+* Non-invasive temperature monitoring
+* Additional environmental characterization
+* Support for future behavioural studies
+
+Firmware development included:
+
+* I²C communication
+* Device initialization
+* Continuous temperature acquisition
+* Sensor validation
+
+---
+
+# RFID Identification
+
+## MFRC522 RFID Module
+
+The embedded platform also integrates an **MFRC522 RFID reader**, providing the capability to uniquely identify tagged animals during future deployments.
+
+The RFID subsystem communicates with the ESP32 through the SPI interface and was integrated as part of the modular firmware architecture.
+
+Development activities included:
+
+* SPI communication
+* Card detection
+* UID acquisition
+* System integration
+* Embedded firmware validation
+
+Although the prototype primarily focused on subsystem validation, the RFID interface establishes a foundation for future automated identification and long-term monitoring applications.
+
+---
+
+# Multi-Sensor Integration
+
+Following independent validation, each sensing subsystem was integrated into a unified embedded firmware architecture.
+
+The ESP32 coordinates sensor acquisition, manages communication interfaces, performs measurement processing and prepares environmental data for transmission to the backend server.
+
+The resulting platform demonstrates a scalable embedded architecture capable of supporting additional sensing technologies with minimal firmware modification.
+
+By separating each hardware driver into modular software components, the monitoring platform remains maintainable, reusable and adaptable to future conservation projects.
+
+---
+
+
 
 ---
