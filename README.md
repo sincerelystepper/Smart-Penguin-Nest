@@ -359,3 +359,183 @@ By separating each hardware driver into modular software components, the monitor
 
 
 ---
+
+---
+
+# Firmware Architecture
+
+The firmware was designed as a modular embedded software stack responsible for coordinating sensor acquisition, system initialization, measurement processing and wireless communication.
+
+Rather than implementing a single monolithic application, development followed an incremental approach where individual sensing subsystems were independently validated before being integrated into the complete monitoring platform.
+
+This significantly reduced integration complexity while improving system reliability during hardware bring-up.
+
+---
+
+# Firmware Design Philosophy
+
+The firmware architecture was developed around several key engineering principles:
+
+* Modular sensor drivers
+* Independent subsystem validation
+* Reusable hardware abstraction
+* Deterministic sensor acquisition
+* Persistent calibration storage
+* Scalable communication framework
+* Maintainable software organization
+
+This approach allows additional sensing technologies to be incorporated with minimal modification to the existing firmware.
+
+---
+
+# Embedded Software Architecture
+
+```text
+                    System Reset
+                          │
+                          ▼
+                Hardware Initialization
+                          │
+                          ▼
+              Peripheral Configuration
+                          │
+                          ▼
+               Sensor Driver Initialization
+                          │
+                          ▼
+               EEPROM Configuration Load
+                          │
+                          ▼
+               Wireless Network Connection
+                          │
+                          ▼
+               Continuous Acquisition Loop
+                          │
+      ┌───────────────────┼────────────────────┐
+      │                   │                    │
+      ▼                   ▼                    ▼
+Load Cell          Environmental         RFID Reader
+Measurement            Sensors          Identification
+      │                   │                    │
+      └───────────────────┼────────────────────┘
+                          │
+                          ▼
+                 Measurement Processing
+                          │
+                          ▼
+                 HTTP Data Packaging
+                          │
+                          ▼
+               Wireless Data Transmission
+                          │
+                          ▼
+                  Repeat Acquisition
+```
+
+---
+
+# System Initialization
+
+Following power-up, the firmware performs a complete initialization sequence to ensure every subsystem is operational before measurements begin.
+
+Initialization includes:
+
+* GPIO configuration
+* Serial interface initialization
+* I²C bus configuration
+* SPI peripheral initialization
+* One-Wire bus initialization
+* WiFi configuration
+* EEPROM access
+* Sensor verification
+
+Performing these checks during startup ensures that communication failures are detected before entering the continuous monitoring state.
+
+---
+
+# Sensor Driver Architecture
+
+Each hardware peripheral was integrated through an independent software driver responsible for:
+
+* Device initialization
+* Communication management
+* Data acquisition
+* Error checking
+* Measurement conversion
+
+This modular organization separates hardware-specific functionality from the higher-level application logic, improving maintainability and simplifying future hardware upgrades.
+
+---
+
+# Measurement Acquisition
+
+During operation, the firmware continuously samples measurements from the connected sensing devices.
+
+Each acquisition cycle consists of:
+
+1. Reading load-cell measurements through the HX711.
+2. Acquiring ambient environmental measurements.
+3. Reading infrared temperature data.
+4. Polling the RFID subsystem.
+5. Processing acquired measurements.
+6. Preparing the communication payload.
+7. Uploading the dataset to the backend server.
+
+This structured acquisition sequence ensures synchronized environmental measurements while maintaining a predictable execution flow.
+
+---
+
+# Calibration Management
+
+Reliable instrumentation requires repeatable calibration.
+
+To eliminate the need for repeated field calibration, calibration coefficients are stored within non-volatile EEPROM memory.
+
+The firmware provides functionality for:
+
+* Zero-offset storage
+* Scale-factor storage
+* Calibration retrieval during boot
+* Calibration updates
+* Persistent parameter management
+
+This allows the monitoring platform to retain calibration parameters even after complete power removal.
+
+---
+
+# Embedded Communication
+
+Wireless communication is handled directly by the ESP32.
+
+Once connected to the local WiFi network, the firmware packages the acquired measurements and transmits them to the remote backend through HTTP requests.
+
+Typical transmitted information includes:
+
+* Environmental temperature
+* Relative humidity
+* Body temperature
+* Weight measurements
+* Device identification
+* Timestamped sensor data
+
+Separating measurement acquisition from communication improves firmware maintainability and enables future migration to alternative communication protocols without redesigning the sensing subsystem.
+
+---
+
+# Reliability Considerations
+
+Throughout development, emphasis was placed on producing firmware suitable for continuous environmental monitoring.
+
+Several design considerations were incorporated during implementation:
+
+* Stable sensor initialization
+* Modular peripheral interfaces
+* Persistent calibration storage
+* Incremental subsystem validation
+* Repeatable measurement acquisition
+* Simplified debugging through independent sensor testing
+
+Although developed as a prototype research platform, the firmware architecture establishes a strong foundation for future deployment-oriented revisions.
+
+---
+
