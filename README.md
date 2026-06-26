@@ -103,3 +103,122 @@ While the immediate application targets wildlife conservation, the engineering p
 The project demonstrates the complete engineering workflow required to transform individual electronic components into an integrated embedded sensing platform suitable for real-world deployment.
 
 ---
+
+# Embedded Electronics Development
+
+The embedded subsystem was developed using an iterative engineering workflow, beginning with individual sensor evaluation before progressing toward complete system integration.
+
+Rather than immediately designing a custom PCB, the hardware was first assembled using modular development boards and prototyping components. This accelerated firmware development, simplified subsystem debugging, and allowed each sensing technology to be independently characterized before full system integration.
+
+Following successful laboratory validation, the complete electronic design was captured in **KiCad**, providing a foundation for future PCB revisions and deployment-ready hardware.
+
+The development process followed the typical lifecycle of an embedded instrumentation project:
+
+```text
+Requirements Definition
+        │
+        ▼
+Component Selection
+        │
+        ▼
+Power Subsystem Validation
+        │
+        ▼
+Sensor Bring-up
+        │
+        ▼
+Individual Driver Development
+        │
+        ▼
+Sensor Calibration
+        │
+        ▼
+Integrated Firmware Development
+        │
+        ▼
+Wireless Communication
+        │
+        ▼
+Hardware Validation
+        │
+        ▼
+Electronic Schematic Capture
+        │
+        ▼
+Future PCB Design
+```
+
+This incremental development approach significantly reduced integration risk by validating each subsystem independently before combining them into the complete monitoring platform.
+
+---
+
+# Hardware Bring-Up
+
+Initial development focused on constructing a working prototype capable of validating each hardware subsystem independently.
+
+The prototype platform combined:
+
+* ESP32 development board
+* Precision load-cell interface
+* Environmental sensing modules
+* RFID identification hardware
+* Infrared temperature sensing
+* Regulated power distribution
+* Wireless communication
+
+Each subsystem was individually verified before being integrated into the complete embedded platform.
+
+<p align="center">
+<img src="images/sys.jpg" width="850">
+</p>
+
+<p align="center">
+<i>Figure 1 — Prototype embedded monitoring platform assembled during subsystem integration and laboratory validation.</i>
+</p>
+
+---
+
+# Power Subsystem Validation
+
+Power integrity is one of the most critical aspects of any embedded system.
+
+Before integrating sensors, the power architecture was characterized using laboratory instrumentation to verify voltage regulation, current consumption, and regulator stability under varying operating conditions.
+
+Validation activities included:
+
+* DC-DC buck converter adjustment
+* Output voltage verification
+* Current consumption measurements
+* Regulator stability testing
+* System power-up validation
+
+<p align="center">
+<img src="images/system power up from the power supply.jpg" width="750">
+</p>
+
+<p align="center">
+<i>Figure 2 — Initial subsystem power-up using a laboratory bench power supply prior to sensor integration.</i>
+</p>
+
+<p align="center">
+<img src="images/dc dc buck converter.jpg" width="750">
+</p>
+
+<p align="center">
+<i>Figure 3 — Output voltage calibration and verification of the DC-DC buck converter before powering embedded electronics.</i>
+</p>
+
+<p align="center">
+<img src="images/current testing from the lab through a multimeter.jpg" width="750">
+</p>
+
+<p align="center">
+<i>Figure 4 — Current consumption measurements performed during hardware characterization and subsystem validation.</i>
+</p>
+
+These validation steps ensured reliable power delivery to the ESP32 and all connected sensors before progressing to firmware integration and long-duration testing.
+
+---
+
+
+---
